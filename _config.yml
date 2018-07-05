@@ -1,0 +1,49 @@
+# Site-Wide Configuration
+
+title: Adam Rodger
+description: Homepage and technology blog of Adam Rodger
+baseurl: ""
+url: "http://adamrodger.github.io"
+
+# Personal Info
+twitter_username: adamrodger
+github_username:  adamrodger
+
+# Build settings
+markdown: kramdown
+theme: minima
+plugins:
+  - jekyll-feed
+
+include:
+  - _pages
+  
+# Exclude from processing.
+# The following items will not be processed, by default. Create a custom list
+# to override the default setting.
+# exclude:
+#   - Gemfile
+#   - Gemfile.lock
+#   - node_modules
+#   - vendor/bundle/
+#   - vendor/cache/
+#   - vendor/gems/
+#   - vendor/ruby/
+
+defaults:
+  # Blog posts
+  - scope:
+      path: _posts
+      type: posts
+    values:
+      layout: post
+      categories: blog
+      read_time: true
+      image:
+        cover: true
+  # Pages
+  - scope:
+      path: _pages
+      type: pages
+    values:
+      layout: page
