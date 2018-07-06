@@ -1,19 +1,45 @@
 # Site-Wide Configuration
 
-title: Adam Rodger
+title: Adam Rodger | Blog
 description: Homepage and technology blog of Adam Rodger
 baseurl: ""
 url: "http://adamrodger.github.io"
+locale: en-GB
+timezone: Europe/London
 
 # Personal Info
 twitter_username: adamrodger
 github_username:  adamrodger
+twitter:
+  username: adamrodger
+social:
+  type: Person
+  name: Adam Rodger
+  links:
+    - "https://github.com/adamrodger"
+    - "https://twitter.com/adamrodger"
+    - "https://www.linkedin.com/in/adamrodger/"
+author:
+  name          : Adam Rodger
+  avatar        : "/assets/images/bio-photo.jpg"
+  bio           : "Lead Developer at dunnhumby specialising in API development in .Net Core"
+  uri           : "http://adamrodger.github.io"
+  location      : Manchester, United Kingdom
+  twitter       : adamrodger
+  linkedin      : adamrodger
+  github        : adamrodger
+  stackoverflow : 429541/adam-rodger
 
 # Build settings
+repository: "adamrodger/adamrodger.github.com"
 markdown: kramdown
-theme: minima
+theme: minimal-mistakes-jekyll
+minimal_mistakes_skin: contrast
+search: true
+read_time: true
 plugins:
   - jekyll-feed
+  - jekyll-paginate-v2
 
 include:
   - _pages
@@ -36,14 +62,27 @@ defaults:
       path: _posts
       type: posts
     values:
-      layout: post
+      layout: single
       categories: blog
       read_time: true
-      image:
-        cover: true
+      share: true
+      related: true
+      author_profile: true
   # Pages
   - scope:
       path: _pages
       type: pages
     values:
       layout: page
+
+## Plugins
+# Plugin: Pagination
+pagination:
+  enabled: true
+  debug: false
+  per_page: 15
+  permalink: "/page/:num/"
+  title: ":title - Page :num of :max"
+  limit: 0
+  sort_field: "date"
+  sort_reverse: true

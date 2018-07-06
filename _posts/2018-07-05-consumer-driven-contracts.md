@@ -1,8 +1,10 @@
 ---
-title:  "Service Evolution With Consumer Driven Contracts"
+title:  "Service Evolution with Consumer Driven Contracts and Pact"
+header:
+  overlay_image: /assets/images/feature/consumer-driven-contracts-1280.jpg
+  overlay_filter: 0.5
+excerpt: "Employing the Consumer Driven Contracts development technique to ease REST API evolution in a fast-moving microservices architecture"
 tags: .net dotnet pact rest api testing
-image:
-  feature: /assets/images/feature/consumer-driven-contracts-1280.jpg
 ---
 In a microservices architecture with a suite of inter-dependent services, ensuring fast feedback when API changes cause
 incompatibility becomes a key problem. Any time that incompatible services are deployed to an environment you will have
