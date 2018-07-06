@@ -33,13 +33,14 @@ author:
 # Build settings
 repository: "adamrodger/adamrodger.github.com"
 markdown: kramdown
-theme: minimal-mistakes-jekyll
-minimal_mistakes_skin: contrast
+remote_theme: "mmistakes/minimal-mistakes"
+minimal_mistakes_skin: "contrast"
 search: true
 read_time: true
 plugins:
   - jekyll-feed
   - jekyll-paginate-v2
+  - jekyll-remote-theme
 
 include:
   - _pages
