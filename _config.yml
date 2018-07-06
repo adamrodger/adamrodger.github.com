@@ -37,9 +37,9 @@ remote_theme: "mmistakes/minimal-mistakes"
 minimal_mistakes_skin: "contrast"
 search: true
 read_time: true
+paginate: 10
 plugins:
   - jekyll-feed
-  - jekyll-paginate-v2
   - jekyll-remote-theme
 
 include:
@@ -75,15 +75,3 @@ defaults:
       type: pages
     values:
       layout: page
-
-## Plugins
-# Plugin: Pagination
-pagination:
-  enabled: true
-  debug: false
-  per_page: 15
-  permalink: "/page/:num/"
-  title: ":title - Page :num of :max"
-  limit: 0
-  sort_field: "date"
-  sort_reverse: true
