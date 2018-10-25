@@ -10,8 +10,8 @@ When unit testing classes that have followed [SOLID] principles, we often find c
 co-ordinator rather than implementing any specific logic themselves. When testing these classes it makes perfect sense
 to use mocks (e.g. the [Moq] library) to control the dependencies being co-ordinated. However, I sometimes see
 instances where people have misunderstood how these mocks work and why the test ends up not testing what it appears to.
-This is because the tests use wildcards which means they are not really testing the underlying code creates the required
-process, they are testing that the mocks themselves create that process.
+This is because the tests use wildcards which means they are not really testing that the underlying code creates the
+required process; they are testing that the mocks themselves create that process.
 
 Here's some example code:
 
