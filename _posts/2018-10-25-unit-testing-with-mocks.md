@@ -218,6 +218,9 @@ in the first place, following the Single Responsibility Principle). This allows 
 outputs of the repository/filter/sorter because the service class never needs to rely on those outputs having a
 sensible value; it just needs to be concerned with co-ordinating the process with the dependencies properly.
 
+*Banner Photo by Rodolfo Clix used with permission from [Pexels]*
+
 [AutoFixture]: https://github.com/AutoFixture/AutoFixture
 [Moq]: https://github.com/Moq/moq4
+[Pexels]: https://www.pexels.com/photo/photo-of-clear-glass-measuring-cup-lot-1366942/
 [SOLID]: https://en.wikipedia.org/wiki/SOLID
