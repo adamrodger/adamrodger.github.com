@@ -65,6 +65,7 @@ defaults:
       type: posts
     values:
       layout: single
+      classes: wide
       categories: blog
       read_time: true
       share: true
