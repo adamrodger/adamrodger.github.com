@@ -97,7 +97,7 @@ public ICollection<Foo> GetFoos(FilterParameters filterParams, SortOrder sortOrd
 
 That code doesn't work at all, but the test will continue to pass because of the `It.IsAny<>` in the mock setups.
 
-# Fixed That For You
+## Fixed That For You
 
 So, let's alter the test to make it work:
 
