@@ -41,6 +41,7 @@ paginate: 10
 plugins:
   - jekyll-feed
   - jekyll-remote-theme
+  - jekyll-include-cache
 
 include:
   - _pages
