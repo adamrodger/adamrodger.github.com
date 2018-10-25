@@ -33,6 +33,8 @@ That code simply gets some objects from somewhere then farms them off to another
 logic, then another class that applies some sorting logic (let's assume the logic is complicated enough that we don't
 want to do it just in here). It's just a co-ordinator class, it doesn't really do any logic of its own.
 
+## These Are Not the tests You're Looking For
+
 Imagine the test:
 
 ```cs
@@ -90,8 +92,11 @@ public ICollection<Foo> GetFoos(FilterParameters filterParams, SortOrder sortOrd
 }
 ```
 
-That code doesn't work at all, but the test will continue to pass because of the `It.IsAny<>` in the mock setups. So
-let's alter the test to make it work:
+That code doesn't work at all, but the test will continue to pass because of the `It.IsAny<>` in the mock setups.
+
+# Fixed That For You
+
+So, let's alter the test to make it work:
 
 ```cs
 [Fact]
