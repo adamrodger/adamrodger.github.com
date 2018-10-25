@@ -1,5 +1,8 @@
 ---
 title:  "Unit Testing with Mocks"
+header:
+  overlay_image: /assets/images/feature/unit-testing-with-mocks-1280.jpg
+  overlay_filter: 0.5
 excerpt: "Using mocks effectively to create unit tests that actually test something"
 tags: .net dotnet testing mock moq
 ---
