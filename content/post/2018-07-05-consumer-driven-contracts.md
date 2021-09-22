@@ -1,10 +1,9 @@
 ---
-title:  "Service Evolution with Consumer Driven Contracts and Pact"
-header:
-  overlay_image: /assets/images/feature/consumer-driven-contracts-1280.jpg
-  overlay_filter: 0.5
-excerpt: "Employing the Consumer Driven Contracts development technique to ease REST API evolution in a fast-moving microservices architecture"
-tags: .net dotnet pact rest api testing
+date: "2018-07-05T00:00:00Z"
+excerpt: Employing the Consumer Driven Contracts development technique to ease REST
+  API evolution in a fast-moving microservices architecture
+tags: [.net dotnet pact rest api testing]
+title: Service Evolution with Consumer Driven Contracts and Pact
 ---
 In a microservices architecture with a suite of inter-dependent services, ensuring fast feedback when API changes cause
 incompatibility becomes a key problem. Any time that incompatible services are deployed to an environment you will have
@@ -232,6 +231,7 @@ public class ProviderTests
     }
 }
 ```
+
 ## Conclusion
 
 Adding Consumer Driven Contract testing with pact to our CI/CD pipeline ensures that we get fast feedback whenever
@@ -241,7 +241,7 @@ an environment and impact our customers. The process fits in with our organisati
 collaborative approach to development across different teams which improves development efficiency for all. Overall,
 introducing this pattern has been a great success for us.
 
-[CI Process]: {% link /assets/images/consumer-driven-contracts-1.png %}
+[CI Process]: /images/2018-07-05-consumer-driven-contracts/figure-1.png
 [Conway's Law]: http://melconway.com/Home/Conways_Law.html
 [Consumer Driven Contracts]: https://martinfowler.com/articles/consumerDrivenContracts.html
 [Pact]: https://docs.pact.io/

@@ -1,0 +1,29 @@
+@media (min-width: 58em) {
+    .content {
+        max-width: 50rem;
+        margin-left: 20rem;
+        margin-right: 2rem;
+        margin-bottom: -40px;
+        min-height: 100%;
+    }
+}
+
+@media (min-width: 68em) {
+    .content {
+        max-width: 60rem;
+        margin-left: 20rem;
+        margin-right: 2rem;
+        margin-bottom: -40px;
+        min-height: 100%;
+    }
+}
+
+pre {
+    padding: 0.5em;
+    line-height: 1;
+}
+
+pre code {
+    font-family: Monaco,Consolas,"Lucida Console",monospace;
+    font-size: 80%;
+}

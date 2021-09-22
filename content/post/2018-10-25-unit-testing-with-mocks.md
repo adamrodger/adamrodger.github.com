@@ -1,10 +1,8 @@
 ---
-title:  "Unit Testing with Mocks"
-header:
-  overlay_image: /assets/images/feature/unit-testing-with-mocks-1280.jpg
-  overlay_filter: 0.5
-excerpt: "Using mocks effectively to create unit tests that actually test something"
-tags: .net dotnet testing mock moq
+date: "2018-10-25T00:00:00Z"
+excerpt: Using mocks effectively to create unit tests that actually test something
+tags: [.net dotnet testing mock moq]
+title: Unit Testing with Mocks
 ---
 When unit testing classes that have followed [SOLID] principles, we often find classes take on the responsibility of a
 co-ordinator rather than implementing any specific logic themselves. When testing these classes it makes perfect sense
@@ -64,12 +62,15 @@ public FooServiceTests()
 public void GetFoos_WhenCalled_ReturnsFilteredAndSortedResponse()
 {
     var expected = this.fixture.CreateMany<Foo>().ToList();
-    this.mockRepository.Setup(r => r.GetFoos())
-                       .Returns(this.fixture.CreateMany<Foo>().ToList());
-    this.mockFilter.Setup(r => r.Filter(It.IsAny<ICollection<Foo>>(), It.IsAny<FilterParameters>()))
-                   .Returns(this.fixture.CreateMany<Foo>().ToList());
-    this.mockSorter.Setup(r => r.Sort(It.IsAny<ICollection<Foo>>(), It.IsAny<SortOrder>()))
-                   .Returns(expected);
+    this.mockRepository
+        .Setup(r => r.GetFoos())
+        .Returns(this.fixture.CreateMany<Foo>().ToList());
+    this.mockFilter
+        .Setup(r => r.Filter(It.IsAny<ICollection<Foo>>(), It.IsAny<FilterParameters>()))
+        .Returns(this.fixture.CreateMany<Foo>().ToList());
+    this.mockSorter
+        .Setup(r => r.Sort(It.IsAny<ICollection<Foo>>(), It.IsAny<SortOrder>()))
+        .Returns(expected);
                    
     var actual = this.service.GetFoos(FilterParameters.Empty, SortOrder.Descending);
     
@@ -218,9 +219,6 @@ in the first place, following the Single Responsibility Principle). This allows 
 outputs of the repository/filter/sorter because the service class never needs to rely on those outputs having a
 sensible value; it just needs to be concerned with co-ordinating the process with the dependencies properly.
 
-*Banner Photo by Rodolfo Clix used with permission from [Pexels]*
-
 [AutoFixture]: https://github.com/AutoFixture/AutoFixture
 [Moq]: https://github.com/Moq/moq4
-[Pexels]: https://www.pexels.com/photo/photo-of-clear-glass-measuring-cup-lot-1366942/
 [SOLID]: https://en.wikipedia.org/wiki/SOLID
