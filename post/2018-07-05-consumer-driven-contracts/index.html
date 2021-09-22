@@ -1,0 +1,311 @@
+<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=generator content="Hugo 0.88.1">
+<title>Service Evolution with Consumer Driven Contracts and Pact &#183; Adam Rodger</title>
+<meta name=description content>
+<meta itemprop=name content="Service Evolution with Consumer Driven Contracts and Pact">
+<meta itemprop=description content="In a microservices architecture with a suite of inter-dependent services, ensuring fast feedback when API changes cause incompatibility becomes a key problem. Any time that incompatible services are deployed to an environment you will have caused a preventable outage that should be detected as part of your usual Continuous Integration solution.
+At dunnhumby, we use a squad based approach to application development which sees small &lsquo;vertical&rsquo; teams form with team members representing all of the &lsquo;horizontals&rsquo;, such as API, UI and QA."><meta itemprop=datePublished content="2018-07-05T00:00:00+00:00">
+<meta itemprop=dateModified content="2018-07-05T00:00:00+00:00">
+<meta itemprop=wordCount content="1924">
+<meta itemprop=keywords content=".net dotnet pact rest api testing,">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="Service Evolution with Consumer Driven Contracts and Pact">
+<meta name=twitter:description content="In a microservices architecture with a suite of inter-dependent services, ensuring fast feedback when API changes cause incompatibility becomes a key problem. Any time that incompatible services are deployed to an environment you will have caused a preventable outage that should be detected as part of your usual Continuous Integration solution.
+At dunnhumby, we use a squad based approach to application development which sees small &lsquo;vertical&rsquo; teams form with team members representing all of the &lsquo;horizontals&rsquo;, such as API, UI and QA.">
+<meta property="og:title" content="Service Evolution with Consumer Driven Contracts and Pact">
+<meta property="og:description" content="In a microservices architecture with a suite of inter-dependent services, ensuring fast feedback when API changes cause incompatibility becomes a key problem. Any time that incompatible services are deployed to an environment you will have caused a preventable outage that should be detected as part of your usual Continuous Integration solution.
+At dunnhumby, we use a squad based approach to application development which sees small &lsquo;vertical&rsquo; teams form with team members representing all of the &lsquo;horizontals&rsquo;, such as API, UI and QA.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://adamrodger.github.io/post/2018-07-05-consumer-driven-contracts/"><meta property="article:section" content="post">
+<meta property="article:published_time" content="2018-07-05T00:00:00+00:00">
+<meta property="article:modified_time" content="2018-07-05T00:00:00+00:00">
+<script type=application/ld+json>{"@context":"https://schema.org","@graph":[{"@type":"Person","@id":"https://adamrodger.github.io#author","name":"Adam Rodger","image":{"@type":"ImageObject","url":"https://adamrodger.github.io/images/profile.jpg"},"description":"Blog"},{"@type":"WebSite","@id":"https://adamrodger.github.io#website","url":"https://adamrodger.github.io","name":"Adam Rodger","description":"Blog","publisher":{"@id":"https://adamrodger.github.io#author"},"inLanguage":"en"},{"@type":"WebPage","@id":"https://adamrodger.github.io/post/2018-07-05-consumer-driven-contracts/#webpage","url":"https://adamrodger.github.io/post/2018-07-05-consumer-driven-contracts/","name":"Service Evolution with Consumer Driven Contracts and Pact","isPartOf":{"@id":"https://adamrodger.github.io#website"},"about":{"@id":"https://adamrodger.github.io#author"},"datePublished":"2018-07-05T00:00:00+00:00","dateModified":"2018-07-05T00:00:00+00:00","description":"In a microservices architecture with a suite of inter-dependent services, ensuring fast feedback when API changes cause incompatibility becomes a key problem. Any time that incompatible services are deployed to an environment you will have caused a preventable outage that should be detected as part of your usual Continuous Integration solution.\nAt dunnhumby, we use a squad based approach to application development which sees small \u0026lsquo;vertical\u0026rsquo; teams form with team members representing all of the \u0026lsquo;horizontals\u0026rsquo;, such as API, UI and QA.","inLanguage":"en","potentialAction":[{"@type":"ReadAction","target":["https://adamrodger.github.io/post/2018-07-05-consumer-driven-contracts/"]}]},{"@type":"Article","isPartOf":{"@id":"https://adamrodger.github.io/post/2018-07-05-consumer-driven-contracts/#webpage"},"mainEntityOfPage":{"@id":"https://adamrodger.github.io/post/2018-07-05-consumer-driven-contracts/#webpage"},"headline":"Service Evolution with Consumer Driven Contracts and Pact","datePublished":"2018-07-05T00:00:00+00:00","dateModified":"2018-07-05T00:00:00+00:00","publisher":{"@id":"https://adamrodger.github.io#author"},"keywords":[],"articleSection":[],"inLanguage":"en","author":{"@type":"Person","name":null},"potentialAction":[{"@type":"CommentAction","name":"Comment","target":["https://adamrodger.github.io/post/2018-07-05-consumer-driven-contracts/#comments"]}]}]}</script>
+<link type=text/css rel=stylesheet href=/css/print.css media=print>
+<link type=text/css rel=stylesheet href=/css/poole.css>
+<link type=text/css rel=stylesheet href=/css/hyde.css>
+<style type=text/css>.sidebar{background-color:#4e5964}.read-more-link a{border-color:#4e5964}.read-more-link a:hover{background-color:#4e5964}.pagination li a{color:#4e5964;border:1px solid #4e5964}.pagination li.active a{background-color:#4e5964}.pagination li a:hover{background-color:#4e5964;opacity:.75}footer a,.content a,.related-posts li a:hover{color:#4e5964}</style>
+<link type=text/css rel=stylesheet href=/css/blog.css>
+<link rel=stylesheet href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700&display=swap">
+<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin=anonymous>
+<link rel=apple-touch-icon-precomposed sizes=144x144 href=/apple-touch-icon-144-precomposed.png>
+<link rel="shortcut icon" href=/favicon.png>
+</head>
+<body>
+<aside class=sidebar>
+<div class=container>
+<div class=sidebar-about>
+<div class=author-image>
+<a href=https://adamrodger.github.io>
+<img src=/images/profile.jpg class="img-circle img-headshot center" alt="Profile Picture">
+</a>
+</div>
+<h1>Adam Rodger</h1>
+<p class=lead>Blog</p>
+</div>
+<nav>
+<ul class=sidebar-nav>
+<li>
+<a href=https://adamrodger.github.io>Home</a>
+</li>
+</ul>
+</nav>
+<section class=social-icons>
+<a href=https://www.linkedin.com/in/adamrodger/ rel=me title=Linkedin target=_blank>
+<i class="fab fa-linkedin" aria-hidden=true></i>
+</a>
+<a href=https://github.com/adamrodger rel=me title=GitHub target=_blank>
+<i class="fab fa-github" aria-hidden=true></i>
+</a>
+<a href=https://twitter.com/adamrodger rel=me title=Twitter target=_blank>
+<i class="fab fa-twitter" aria-hidden=true></i>
+</a>
+<a href=https://stackoverflow.com/users/429541/adam-rodger rel=me title=StackOverflow target=_blank>
+<i class="fab fa-stack-overflow" aria-hidden=true></i>
+</a>
+</section>
+</div>
+</aside>
+<main class="content container">
+<div class=post>
+<h1 class=title>Service Evolution with Consumer Driven Contracts and Pact</h1>
+<div class=post-date>
+<time datetime=2018-07-05T00:00:00Z>Jul 5, 2018</time> <span class=readtime>&#183; 10 min read</span>
+</div>
+<div>
+<p>In a microservices architecture with a suite of inter-dependent services, ensuring fast feedback when API changes cause
+incompatibility becomes a key problem. Any time that incompatible services are deployed to an environment you will have
+caused a preventable outage that should be detected as part of your usual Continuous Integration solution.</p>
+<p>At dunnhumby, we use a squad based approach to application development which sees small &lsquo;vertical&rsquo; teams form with team
+members representing all of the &lsquo;horizontals&rsquo;, such as API, UI and QA. Each squad has its own backlog and priorities,
+but all must come together to deliver a single product to a single deadline.</p>
+<blockquote>
+<p>Any organization that designs a system (defined broadly) will produce a design whose structure is a copy of the
+organization&rsquo;s communication structure. - Conway&rsquo;s Law</p>
+</blockquote>
+<p>Owing to <a href=http://melconway.com/Home/Conways_Law.html>Conway&rsquo;s Law</a> we&rsquo;ve naturally adopted a microservices development approach in our API design. Different squads
+are responsible for developing different microservices which represent their key business areas, such as pricing rules
+or competitor analysis. Each must be able to evolve independently whilst still forming a cohesive product made of these
+interacting parts.</p>
+<h2 id=provider-driven-contracts>Provider Driven Contracts</h2>
+<p>The central tenet of ensuring that this goal is met is that the different services must somehow define and conform to a
+contract between each other so that interoperability is achieved. One approach to this is for each service to generate
+some kind of binary output (such as a NuGet package or jar file) which is generated from its public API and acts as a
+client. This is known as <strong>Provider Driven Contracts</strong> because the API provider details to consumers which endpoints
+are available and the ways in which they must be used.</p>
+<p>The development process that naturally follows from this approach when using a squad-based organisational structure and
+a microservices architecture is as follows:</p>
+<ul>
+<li>Team A needs to add a new feature to Service A. This feature requires retrieving data from Service B, which is
+maintained by Team B, but the API is not currently available.</li>
+<li>Team A talks to Team B to specify what they want, they agree and the change goes on to Team B&rsquo;s backlog.</li>
+<li>Team A wait&mldr; They can perform the work required in Service A to support their feature and could stub out the calls
+to Service B in order to continue development, but ultimately they must wait until Service B is ready before they can
+properly integrate and deploy their changes.</li>
+<li>At some point in the future, Team B delivers an updated binary client containing the new functionality and Team A can
+now integrate properly.</li>
+</ul>
+<p>In a fast-moving development environment this can cause a number of issues.</p>
+<p>Firstly, any time that a team must wait for another team to deliver in to them is potentially time wasted. At the very
+least it introduces inefficiency if that team must create mocks/stubs that will eventually be thrown away. At worst, the
+time between the feature being needed and the feature becoming available might be long enough that the team has had to
+move on to a different story and now must back-track to integrate.</p>
+<p>The next problem is one that developers in this scenario will be all too familiar with - the client binary arrives from
+the other team and it doesn&rsquo;t quite match what you thought had been agreed. Your stub has a field called <code>product_id</code>
+whereas the client has <code>productId</code>. A few data types are different from your stub. The API arguments are slightly
+different. You now must engage with the other team again and try to discuss what changes need to be made, agree them
+again and then repeat the cycle. Hopefully you only need to do this once and hopefully the time delay is minimal, but
+sometimes this isn&rsquo;t the case.</p>
+<p>These problems have been seen as necessary evils to achieve the major overall goal of ensuring API compatibility between
+services, and the best part of this approach is that this is absolutely guaranteed for the consumer.</p>
+<p>However there are still additional, albeit more minor, problems for the provider in this scenario. By providing a client
+binary out to the world the provider has no way of knowing how the APIs are being used, or even if they are at all,
+until the API is deployed to a working representative environment. This makes evolving the API challenging because it&rsquo;s
+unclear whether any particular API can be modified or even deleted entirely.</p>
+<p>The provider also has no way of verifying that any changes don&rsquo;t introduce problems until after the client has already
+been delivered to the wild. The provider squad must produce a new version, submit it to the package management
+repository, wait for clients to upgrade and then receive any feedback if any problems are introduced. Again, this
+introduces inefficiency due to the very long feedback loop.</p>
+<h2 id=consumer-driven-contracts>Consumer Driven Contracts</h2>
+<p><strong><a href=https://martinfowler.com/articles/consumerDrivenContracts.html>Consumer Driven Contracts</a></strong> attempts to solve the same overall goal - ensuring service interoperability - by
+flipping the change control responsibility on its head. Each consumer of an API declares the specific contract that it
+needs from the provider and the provider&rsquo;s job is to make sure that it meets the aggregation of all of the contracts
+from all of the consumers. Each consumer need only define the sub-set of functionality that they require following the
+<a href=https://en.wikipedia.org/wiki/Robustness_principle>Robustness Principle</a>:</p>
+<blockquote>
+<p>Be conservative in what you send, be liberal in what you accept</p>
+</blockquote>
+<p>Using a framework such as <a href=https://docs.pact.io/>Pact</a>, these consumer contracts can be written as executable specifications that are run as
+part of the CI job of the consumer and the provider. Pact files are &ldquo;contract by example&rdquo; specifications which contain
+all of the required interactions (requests and responses) that the consumer requires of the provider. This allows a
+test-driven approach to API evolution backed by Continuous Integration to ensure that everything still works as
+expected even when unrelated changes are introduced.</p>
+<p>Our CI pipeline is as follows:</p>
+<p><img src=/images/2018-07-05-consumer-driven-contracts/figure-1.png alt="CI Process"></p>
+<p>Every time a change is made to a consumer, the Pact specification is generated and shipped over to the provider. The
+provider then re-runs the verification test which executes each of the Pacts against the latest version of the provider.
+If the provider no longer meets one or more the specifications, the build will fail and the CI pipeline will stop. This
+ensures that these components are not deployed to an environment because we already know that they are incompatible. If
+the Pact specification is verified successfully then the changed Consumer component can continue to be deployed.</p>
+<p>This approach solves the major problems of the binary client technique because the development process changes with it:</p>
+<ul>
+<li>Team A and Team B meet as before and agree the changes to be made to Service B.</li>
+<li>Team A write some new consumer tests in Service A which document the agreed changes.</li>
+<li>When these new tests are executed in CI, the build for Service B will turn red because the needs of Consumer A are not
+met.
+<ul>
+<li>In practice, our CI is set up so that if both consumer and provider repositories are using the same branch name,
+the branch build actually goes red. This ensures that master always stays green.</li>
+</ul>
+</li>
+<li>Teams A and B continue working until the build is green again, at which point the two services are definitely
+compatible so the changes can be merged and deployed.</li>
+</ul>
+<p>This test-driven approach prevents the problems introduced by the provider-driven approach because the feedback loop is
+much tighter. Every commit is checked to ensure that it still meets the executable specifications so problems are found
+immediately rather than after the clients have already been upgraded and/or deployed to an environment.</p>
+<p>For the consumer, this means that they receive the required guarantees about compatibility upfront without having to
+wait until the functionality is available.</p>
+<p>API evolution is also much easier because the consumers of an API are explicitly defined. If the team responsible for an
+API want to modify or delete it then they will get immediate feedback as to what problems that would introduce, if any,
+by simply performing the changes and running the tests. If the changes introduce no failing tests then they needn&rsquo;t
+coordinate with any other team and can freely commit them. If the changes do introduce failing tests then the team can
+either decide to abandon the change or they will have a clear list of which consumers would need to change. This
+provides the starting point for a discussion with the other teams responsible. Pact also provides the <a href=https://github.com/pact-foundation/pact_broker>Pact Broker</a>
+which will document and visualise all of the interactions so you can tell how each provider is called and by whom.</p>
+<p>This development process fosters an attitude whereby other teams that consume your APIs are seen as your customers, who
+are empowered to define the changes that they need instead of receiving the changes that you think they need.
+Inefficiency is greatly reduced owing to immediate feedback which boosts overall developer productivity.</p>
+<h2 id=example>Example</h2>
+<p>A Consumer defines pact interactions within unit tests which run against a mock server provided by Pact. This server
+will automatically respond to any registered request with the registered response so that you can test that your client
+classes make the appropriate requests and successfully deserialise the results.</p>
+<p>For example:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=color:#ff79c6>public</span> <span style=color:#ff79c6>class</span> <span style=color:#50fa7b>ConsumerClient</span>()
+{
+    <span style=color:#ff79c6>public</span> ConsumerClient(<span style=color:#8be9fd>string</span> baseUrl)
+    {
+        <span style=color:#6272a4>// ...create a HttpClient...
+</span><span style=color:#6272a4></span>    }
+    
+    <span style=color:#ff79c6>public</span> Task&lt;Product&gt; GetProductAsync(<span style=color:#8be9fd>int</span> productId)
+    {
+        <span style=color:#6272a4>// ...call the API using HttpClient...
+</span><span style=color:#6272a4></span>    };
+}
+
+<span style=color:#ff79c6>public</span> <span style=color:#ff79c6>class</span> <span style=color:#50fa7b>ConsumerTests</span> : IDisposable
+{
+    <span style=color:#ff79c6>private</span> <span style=color:#ff79c6>readonly</span> IPactBuilder builder;
+    <span style=color:#ff79c6>private</span> <span style=color:#ff79c6>readonly</span> IMockProviderService provider;
+
+    <span style=color:#ff79c6>public</span> ConsumerTests()
+    {
+        <span style=color:#8be9fd>var</span> builder = <span style=color:#ff79c6>new</span> PactBuilder(<span style=color:#ff79c6>new</span> PactConfig { SpecificationVersion = <span style=color:#f1fa8c>&#34;2.0.0&#34;</span> });
+        builder.ServiceConsumer(<span style=color:#f1fa8c>&#34;Consumer&#34;</span>).HasPactWith(<span style=color:#f1fa8c>&#34;Provider&#34;</span>);
+               
+        <span style=color:#6272a4>// start the mock provider on port 8080
+</span><span style=color:#6272a4></span>        <span style=color:#8be9fd>var</span> provider = builder.ProviderService(<span style=color:#bd93f9>8080</span>);
+    }
+
+    <span style=color:#ff79c6>public</span> <span style=color:#ff79c6>void</span> Dispose()
+    {
+        <span style=color:#6272a4>// write the pact file to disk
+</span><span style=color:#6272a4></span>        builder.Build();
+    }
+<span style=color:#50fa7b>
+</span><span style=color:#50fa7b>    [Fact]</span>
+    <span style=color:#ff79c6>public</span> <span style=color:#ff79c6>async</span> Task GetProducts_SuccessfulRequest_ReturnsProducts()
+    {
+        <span style=color:#6272a4>// arrange the interaction
+</span><span style=color:#6272a4></span>        provider.Given(<span style=color:#f1fa8c>&#34;some products exist&#34;</span>)
+                .UponReceiving(<span style=color:#f1fa8c>&#34;a request for product by id&#34;</span>)
+                .With(<span style=color:#ff79c6>new</span> ProviderServiceRequest
+                {
+                    Method = HttpVerb.Get,
+                    Path = <span style=color:#f1fa8c>&#34;/api/products/123&#34;</span>,
+                    Headers = <span style=color:#ff79c6>new</span> Dictionary&lt;<span style=color:#8be9fd>string</span>, <span style=color:#8be9fd>object</span>&gt;
+                    {
+                        { <span style=color:#f1fa8c>&#34;Accept&#34;</span>, <span style=color:#f1fa8c>&#34;application/json&#34;</span> }
+                    }
+                })
+                .WillRespondWith(<span style=color:#ff79c6>new</span> ProviderServiceResponse
+                {
+                    Status = <span style=color:#bd93f9>200</span>,
+                    Headers = <span style=color:#ff79c6>new</span> Dictionary&lt;<span style=color:#8be9fd>string</span>, <span style=color:#8be9fd>object</span>&gt;
+                    {
+                        { <span style=color:#f1fa8c>&#34;Content-Type&#34;</span>, <span style=color:#f1fa8c>&#34;application/json; charset=utf-8&#34;</span> }
+                    },
+                    Body = <span style=color:#ff79c6>new</span>
+                    {
+                        id = <span style=color:#bd93f9>123</span>,
+                        name = <span style=color:#f1fa8c>&#34;Peanut Butter&#34;</span>,
+                        price = <span style=color:#bd93f9>1.23</span>
+                    }
+                });
+                
+        <span style=color:#6272a4>// act to ensure your defined class calls the provider properly
+</span><span style=color:#6272a4></span>        <span style=color:#8be9fd>var</span> client = <span style=color:#ff79c6>new</span> ConsumerClient(<span style=color:#f1fa8c>&#34;http://localhost:8080&#34;</span>);
+        <span style=color:#ff79c6>await</span> client.GetProductAsync(<span style=color:#bd93f9>123</span>);
+        
+        <span style=color:#6272a4>// assert that the API was called properly
+</span><span style=color:#6272a4></span>        provider.VerifyInteractions();
+    }
+}
+</code></pre></div><p>The result of running this test is a pact file named <code>consumer-provider.json</code> which then must be made available to the
+provider CI task (we use an artifact dependency in TeamCity). The provider tests then start your API and instruct the
+pact verifier to replay all requests within the file and verify that the real responses match the expected ones:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=color:#ff79c6>public</span> <span style=color:#ff79c6>class</span> <span style=color:#50fa7b>ProviderTests</span>
+{
+<span style=color:#50fa7b>    [Fact]</span>
+    <span style=color:#ff79c6>public</span> <span style=color:#ff79c6>void</span> ProviderSatisfiesPactWithConsumer()
+    {
+        <span style=color:#6272a4>// start your API
+</span><span style=color:#6272a4></span>        IWebHost host = <span style=color:#ff79c6>new</span> WebHostBuilder().UseStartup&lt;Startup&gt;() <span style=color:#6272a4>// from your regular ASP.Net Core Startup.cs file
+</span><span style=color:#6272a4></span>                                            .UseKestrel()
+                                            .UseUrls(<span style=color:#f1fa8c>&#34;http://localhost:5000&#34;</span>)
+                                            .Build();
+        host.Start();
+        
+        <span style=color:#6272a4>// run the interactions from the pact file and verify the results
+</span><span style=color:#6272a4></span>        verifier.ServiceProvider(<span style=color:#f1fa8c>&#34;Provider&#34;</span>, <span style=color:#f1fa8c>&#34;http://localhost:5000&#34;</span>)
+                .HonoursPactWith(<span style=color:#f1fa8c>&#34;Consumer&#34;</span>)
+                .PactUri(<span style=color:#f1fa8c>&#34;path/to/consumer-provider.json&#34;</span>)
+                .Verify();
+    }
+}
+</code></pre></div><h2 id=conclusion>Conclusion</h2>
+<p>Adding Consumer Driven Contract testing with pact to our CI/CD pipeline ensures that we get fast feedback whenever
+incompatibilities are introduced into our APIs and eases the process of API evolution. The ability to tell prior to
+deployment whether our APIs can communicate is invaluable in ensuring new releases of our software don&rsquo;t bring down
+an environment and impact our customers. The process fits in with our organisational structure and fosters a
+collaborative approach to development across different teams which improves development efficiency for all. Overall,
+introducing this pattern has been a great success for us.</p>
+</div>
+<div>
+<ul class=tags></ul>
+</div>
+<div class=share-buttons>
+<a class=twitter-share-button href=# title="Share on Twitter" data-url=https://adamrodger.github.io/post/2018-07-05-consumer-driven-contracts/ data-text="Service Evolution with Consumer Driven Contracts and Pact"><i class="fab fa-twitter"></i></a>
+<a class=linkedin-share-button href=# title="Share on LinkedIn" data-url=https://adamrodger.github.io/post/2018-07-05-consumer-driven-contracts/ data-text="Service Evolution with Consumer Driven Contracts and Pact"><i class="fab fa-linkedin-in"></i></a>
+<a class=facebook-share-button href=# title="Share on Facebook" data-url=https://adamrodger.github.io/post/2018-07-05-consumer-driven-contracts/ data-text="Service Evolution with Consumer Driven Contracts and Pact"><i class="fab fa-facebook"></i></a>
+<a class=telegram-share-button href=# title="Share on Telegram" data-url=https://adamrodger.github.io/post/2018-07-05-consumer-driven-contracts/ data-text="Service Evolution with Consumer Driven Contracts and Pact"><i class="fab fa-telegram"></i></a>
+<a class=pinterest-share-button href=# title="Share on Pinterest" data-url=https://adamrodger.github.io/post/2018-07-05-consumer-driven-contracts/ data-text="Service Evolution with Consumer Driven Contracts and Pact"><i class="fab fa-pinterest"></i></a>
+</div>
+</div>
+</main>
+<footer>
+<div>
+<p>
+&copy; Adam Rodger 2021
+&#183; <a href=https://creativecommons.org/licenses/by-sa/4.0 target=_blank>CC BY-SA 4.0</a>
+</p>
+</div>
+</footer>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/js/all.min.js integrity="sha256-MAgcygDRahs+F/Nk5Vz387whB4kSK9NXlDN3w58LLq0=" crossorigin=anonymous></script>
+<script src=/js/jquery.min.js></script>
+<script src=/js/soho.js></script>
+</body>
+</html>

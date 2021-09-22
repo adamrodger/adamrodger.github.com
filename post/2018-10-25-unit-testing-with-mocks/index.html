@@ -1,0 +1,284 @@
+<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=generator content="Hugo 0.88.1">
+<title>Unit Testing with Mocks &#183; Adam Rodger</title>
+<meta name=description content>
+<meta itemprop=name content="Unit Testing with Mocks">
+<meta itemprop=description content="When unit testing classes that have followed SOLID principles, we often find classes take on the responsibility of a co-ordinator rather than implementing any specific logic themselves. When testing these classes it makes perfect sense to use mocks (e.g. the Moq library) to control the dependencies being co-ordinated. However, I sometimes see instances where people have misunderstood how these mocks work and why the test ends up not testing what it appears to."><meta itemprop=datePublished content="2018-10-25T00:00:00+00:00">
+<meta itemprop=dateModified content="2018-10-25T00:00:00+00:00">
+<meta itemprop=wordCount content="1109">
+<meta itemprop=keywords content=".net dotnet testing mock moq,">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="Unit Testing with Mocks">
+<meta name=twitter:description content="When unit testing classes that have followed SOLID principles, we often find classes take on the responsibility of a co-ordinator rather than implementing any specific logic themselves. When testing these classes it makes perfect sense to use mocks (e.g. the Moq library) to control the dependencies being co-ordinated. However, I sometimes see instances where people have misunderstood how these mocks work and why the test ends up not testing what it appears to.">
+<meta property="og:title" content="Unit Testing with Mocks">
+<meta property="og:description" content="When unit testing classes that have followed SOLID principles, we often find classes take on the responsibility of a co-ordinator rather than implementing any specific logic themselves. When testing these classes it makes perfect sense to use mocks (e.g. the Moq library) to control the dependencies being co-ordinated. However, I sometimes see instances where people have misunderstood how these mocks work and why the test ends up not testing what it appears to.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://adamrodger.github.io/post/2018-10-25-unit-testing-with-mocks/"><meta property="article:section" content="post">
+<meta property="article:published_time" content="2018-10-25T00:00:00+00:00">
+<meta property="article:modified_time" content="2018-10-25T00:00:00+00:00">
+<script type=application/ld+json>{"@context":"https://schema.org","@graph":[{"@type":"Person","@id":"https://adamrodger.github.io#author","name":"Adam Rodger","image":{"@type":"ImageObject","url":"https://adamrodger.github.io/images/profile.jpg"},"description":"Blog"},{"@type":"WebSite","@id":"https://adamrodger.github.io#website","url":"https://adamrodger.github.io","name":"Adam Rodger","description":"Blog","publisher":{"@id":"https://adamrodger.github.io#author"},"inLanguage":"en"},{"@type":"WebPage","@id":"https://adamrodger.github.io/post/2018-10-25-unit-testing-with-mocks/#webpage","url":"https://adamrodger.github.io/post/2018-10-25-unit-testing-with-mocks/","name":"Unit Testing with Mocks","isPartOf":{"@id":"https://adamrodger.github.io#website"},"about":{"@id":"https://adamrodger.github.io#author"},"datePublished":"2018-10-25T00:00:00+00:00","dateModified":"2018-10-25T00:00:00+00:00","description":"When unit testing classes that have followed SOLID principles, we often find classes take on the responsibility of a co-ordinator rather than implementing any specific logic themselves. When testing these classes it makes perfect sense to use mocks (e.g. the Moq library) to control the dependencies being co-ordinated. However, I sometimes see instances where people have misunderstood how these mocks work and why the test ends up not testing what it appears to.","inLanguage":"en","potentialAction":[{"@type":"ReadAction","target":["https://adamrodger.github.io/post/2018-10-25-unit-testing-with-mocks/"]}]},{"@type":"Article","isPartOf":{"@id":"https://adamrodger.github.io/post/2018-10-25-unit-testing-with-mocks/#webpage"},"mainEntityOfPage":{"@id":"https://adamrodger.github.io/post/2018-10-25-unit-testing-with-mocks/#webpage"},"headline":"Unit Testing with Mocks","datePublished":"2018-10-25T00:00:00+00:00","dateModified":"2018-10-25T00:00:00+00:00","publisher":{"@id":"https://adamrodger.github.io#author"},"keywords":[],"articleSection":[],"inLanguage":"en","author":{"@type":"Person","name":null},"potentialAction":[{"@type":"CommentAction","name":"Comment","target":["https://adamrodger.github.io/post/2018-10-25-unit-testing-with-mocks/#comments"]}]}]}</script>
+<link type=text/css rel=stylesheet href=/css/print.css media=print>
+<link type=text/css rel=stylesheet href=/css/poole.css>
+<link type=text/css rel=stylesheet href=/css/hyde.css>
+<style type=text/css>.sidebar{background-color:#4e5964}.read-more-link a{border-color:#4e5964}.read-more-link a:hover{background-color:#4e5964}.pagination li a{color:#4e5964;border:1px solid #4e5964}.pagination li.active a{background-color:#4e5964}.pagination li a:hover{background-color:#4e5964;opacity:.75}footer a,.content a,.related-posts li a:hover{color:#4e5964}</style>
+<link type=text/css rel=stylesheet href=/css/blog.css>
+<link rel=stylesheet href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700&display=swap">
+<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin=anonymous>
+<link rel=apple-touch-icon-precomposed sizes=144x144 href=/apple-touch-icon-144-precomposed.png>
+<link rel="shortcut icon" href=/favicon.png>
+</head>
+<body>
+<aside class=sidebar>
+<div class=container>
+<div class=sidebar-about>
+<div class=author-image>
+<a href=https://adamrodger.github.io>
+<img src=/images/profile.jpg class="img-circle img-headshot center" alt="Profile Picture">
+</a>
+</div>
+<h1>Adam Rodger</h1>
+<p class=lead>Blog</p>
+</div>
+<nav>
+<ul class=sidebar-nav>
+<li>
+<a href=https://adamrodger.github.io>Home</a>
+</li>
+</ul>
+</nav>
+<section class=social-icons>
+<a href=https://www.linkedin.com/in/adamrodger/ rel=me title=Linkedin target=_blank>
+<i class="fab fa-linkedin" aria-hidden=true></i>
+</a>
+<a href=https://github.com/adamrodger rel=me title=GitHub target=_blank>
+<i class="fab fa-github" aria-hidden=true></i>
+</a>
+<a href=https://twitter.com/adamrodger rel=me title=Twitter target=_blank>
+<i class="fab fa-twitter" aria-hidden=true></i>
+</a>
+<a href=https://stackoverflow.com/users/429541/adam-rodger rel=me title=StackOverflow target=_blank>
+<i class="fab fa-stack-overflow" aria-hidden=true></i>
+</a>
+</section>
+</div>
+</aside>
+<main class="content container">
+<div class=post>
+<h1 class=title>Unit Testing with Mocks</h1>
+<div class=post-date>
+<time datetime=2018-10-25T00:00:00Z>Oct 25, 2018</time> <span class=readtime>&#183; 6 min read</span>
+</div>
+<div>
+<p>When unit testing classes that have followed <a href=https://en.wikipedia.org/wiki/SOLID>SOLID</a> principles, we often find classes take on the responsibility of a
+co-ordinator rather than implementing any specific logic themselves. When testing these classes it makes perfect sense
+to use mocks (e.g. the <a href=https://github.com/Moq/moq4>Moq</a> library) to control the dependencies being co-ordinated. However, I sometimes see
+instances where people have misunderstood how these mocks work and why the test ends up not testing what it appears to.
+This is because the tests use wildcards which means they are not really testing that the underlying code creates the
+required process; they are testing that the mocks themselves create that process.</p>
+<p>Here&rsquo;s some example code:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cs data-lang=cs><span style=color:#ff79c6>public</span> <span style=color:#ff79c6>class</span> <span style=color:#50fa7b>FooService</span>
+{
+    <span style=color:#ff79c6>private</span> <span style=color:#ff79c6>readonly</span> IFooRepository repository = ...;
+    <span style=color:#ff79c6>private</span> <span style=color:#ff79c6>readonly</span> IFilter filter = ...;
+    <span style=color:#ff79c6>private</span> <span style=color:#ff79c6>readonly</span> ISorter sorter = ...;
+
+    <span style=color:#ff79c6>public</span> ICollection&lt;Foo&gt; GetFoos(FilterParameters filterParams, SortOrder sortOrder)
+    {
+        ICollection&lt;Foo&gt; foos = <span style=color:#ff79c6>this</span>.repository.GetFoos();
+        ICollection&lt;Foo&gt; filtered = <span style=color:#ff79c6>this</span>.filter.Filter(foos, filterParams);
+        ICollection&lt;Foo&gt; sorted = <span style=color:#ff79c6>this</span>.sorter.Sort(filtered, sortOrder);
+        <span style=color:#ff79c6>return</span> sorted;
+    }
+}
+</code></pre></div><p>That code simply gets some objects from somewhere then passes them off to another class that applies some filtering
+logic, then another class that applies some sorting logic (let&rsquo;s assume the logic is complicated enough that we don&rsquo;t
+want to do it just in here). It&rsquo;s just a co-ordinator class, it doesn&rsquo;t really do any logic of its own.</p>
+<h2 id=these-are-not-the-tests-youre-looking-for>These Are Not the Tests You&rsquo;re Looking For</h2>
+<p>Imagine the test:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cs data-lang=cs><span style=color:#ff79c6>private</span> <span style=color:#ff79c6>readonly</span> FooService service;
+
+<span style=color:#ff79c6>private</span> <span style=color:#ff79c6>readonly</span> Mock&lt;IFooRepository&gt; mockRepository;
+<span style=color:#ff79c6>private</span> <span style=color:#ff79c6>readonly</span> Mock&lt;IFilter&gt; mockFilter;
+<span style=color:#ff79c6>private</span> <span style=color:#ff79c6>readonly</span> Mock&lt;ISorter&gt; mockSorter;
+
+<span style=color:#ff79c6>private</span> <span style=color:#ff79c6>readonly</span> AutoFixture.IFixture fixture;
+
+<span style=color:#ff79c6>public</span> FooServiceTests()
+{
+    <span style=color:#ff79c6>this</span>.mockRepository = <span style=color:#ff79c6>new</span> Mock&lt;IFooRepository&gt;();
+    <span style=color:#ff79c6>this</span>.mockFilter = <span style=color:#ff79c6>new</span> Mock&lt;IFilter&gt;();
+    <span style=color:#ff79c6>this</span>.mockSorter = <span style=color:#ff79c6>new</span> Mock&lt;ISorter&gt;();
+    
+    <span style=color:#ff79c6>this</span>.fixture = <span style=color:#ff79c6>new</span> Fixture();
+    
+    <span style=color:#ff79c6>this</span>.service = <span style=color:#ff79c6>new</span> FooService(<span style=color:#ff79c6>this</span>.mockRepository.Object, <span style=color:#ff79c6>this</span>.mockFilter.Object, <span style=color:#ff79c6>this</span>.mockSorter.Object);
+}
+<span style=color:#50fa7b>
+</span><span style=color:#50fa7b>[Fact]</span>
+<span style=color:#ff79c6>public</span> <span style=color:#ff79c6>void</span> GetFoos_WhenCalled_ReturnsFilteredAndSortedResponse()
+{
+    <span style=color:#8be9fd>var</span> expected = <span style=color:#ff79c6>this</span>.fixture.CreateMany&lt;Foo&gt;().ToList();
+    <span style=color:#ff79c6>this</span>.mockRepository
+        .Setup(r =&gt; r.GetFoos())
+        .Returns(<span style=color:#ff79c6>this</span>.fixture.CreateMany&lt;Foo&gt;().ToList());
+    <span style=color:#ff79c6>this</span>.mockFilter
+        .Setup(r =&gt; r.Filter(It.IsAny&lt;ICollection&lt;Foo&gt;&gt;(), It.IsAny&lt;FilterParameters&gt;()))
+        .Returns(<span style=color:#ff79c6>this</span>.fixture.CreateMany&lt;Foo&gt;().ToList());
+    <span style=color:#ff79c6>this</span>.mockSorter
+        .Setup(r =&gt; r.Sort(It.IsAny&lt;ICollection&lt;Foo&gt;&gt;(), It.IsAny&lt;SortOrder&gt;()))
+        .Returns(expected);
+                   
+    <span style=color:#8be9fd>var</span> actual = <span style=color:#ff79c6>this</span>.service.GetFoos(FilterParameters.Empty, SortOrder.Descending);
+    
+    actual.Should().Equal(expected);
+}
+</code></pre></div><p>On the face of it, that test looks like it makes sure we&rsquo;re returning the output from the repository after it&rsquo;s been
+filtered and sorted, but it doesn&rsquo;t. The only thing that tests is that the overall method returns whatever the final
+setup (on <code>mockSorter</code>) happens to return. Because it uses <code>It.IsAny&lt;></code> all the way through, it never actually verifies
+that the output of the repository is passed to the filter with the appropriate filter parameters. It never verifies
+that the output of the filter is passed to the sorter with the appropriate sort order. All it tests is that whatever
+the sorter returns, that&rsquo;s what the method returns. This means it doesn&rsquo;t test the process. Imagine the following
+implementation (which is broken, don&rsquo;t do this):</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cs data-lang=cs><span style=color:#ff79c6>public</span> ICollection&lt;Foo&gt; GetFoos(FilterParameters filterParams, SortOrder sortOrder)
+{
+    <span style=color:#ff79c6>this</span>.repository.GetFoos(); <span style=color:#6272a4>// just throws it away
+</span><span style=color:#6272a4></span>    <span style=color:#ff79c6>this</span>.filter.Filter(<span style=color:#ff79c6>null</span>, <span style=color:#ff79c6>null</span>); <span style=color:#6272a4>// passes some nulls then throws away the result, because why not?
+</span><span style=color:#6272a4></span>    ICollection&lt;Foo&gt; sorted = <span style=color:#ff79c6>this</span>.sorter.Sort(<span style=color:#ff79c6>null</span>, <span style=color:#ff79c6>null</span>); <span style=color:#6272a4>// some more nulls, but keep the result
+</span><span style=color:#6272a4></span>    <span style=color:#ff79c6>return</span> sorted;
+}
+</code></pre></div><p>That code doesn&rsquo;t work at all, but the test will continue to pass because of the <code>It.IsAny&lt;></code> in the mock setups.</p>
+<h2 id=fixed-that-for-you>Fixed That For You</h2>
+<p>So, let&rsquo;s alter the test to make it work:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cs data-lang=cs><span style=color:#50fa7b>[Fact]</span>
+<span style=color:#ff79c6>public</span> <span style=color:#ff79c6>void</span> GetFoos_WhenCalled_ReturnsFilteredAndSortedResponse()
+{
+    <span style=color:#8be9fd>var</span> foos = <span style=color:#ff79c6>this</span>.fixture.CreateMany&lt;Foo&gt;().ToList();
+    <span style=color:#8be9fd>var</span> filtered = <span style=color:#ff79c6>this</span>.fixture.CreateMany&lt;Foo&gt;().ToList();
+    <span style=color:#8be9fd>var</span> expected = <span style=color:#ff79c6>this</span>.fixture.CreateMany&lt;Foo&gt;().ToList();
+    <span style=color:#8be9fd>var</span> filterParameters = <span style=color:#ff79c6>this</span>.fixture.Create&lt;FilterParameters&gt;();
+    <span style=color:#8be9fd>var</span> sortOrder = SortOrder.Descending;
+    <span style=color:#ff79c6>this</span>.mockRepository.Setup(r =&gt; r.GetFoos()).Returns(foos);
+    <span style=color:#ff79c6>this</span>.mockFilter.Setup(r =&gt; r.Filter(foos, filterParameters)).Returns(filtered);
+    <span style=color:#ff79c6>this</span>.mockSorter.Setup(r =&gt; r.Sort(filtered, sortOrder)).Returns(expected);
+                   
+    <span style=color:#8be9fd>var</span> actual = <span style=color:#ff79c6>this</span>.service.GetFoos(filterParameters, sortOrder);
+    
+    actual.Should().Equal(expected);
+}
+</code></pre></div><p>Now the test fails because of the broken implementation, and only starts passing when we revert back to the correct
+implementation. This test verifies that each step of the process is working with the output of the previous step, plus
+using the arguments provided to the method for filtering/sorting. This is the way that mocks should be used when
+testing the &lsquo;happy path&rsquo;.</p>
+<h2 id=always-an-exception>Always An Exception</h2>
+<p>That&rsquo;s not to say that <code>It.IsAny&lt;></code> or other similar wildcarding has no place in tests, just that you need to be careful
+where to use it. Some valid use-cases are:</p>
+<ul>
+<li>When testing the error paths through code you may want the code to throw an exception on all possible inputs rather
+than just a few known ones, otherwise you&rsquo;d be replicating logic from dependencies within your mocks. This is clearly
+a bad idea because that logic may change and your mocks may no longer be representative. For example:
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cs data-lang=cs><span style=color:#ff79c6>public</span> <span style=color:#ff79c6>void</span> Create_InvalidInput_ThrowsValidationException()
+{
+    <span style=color:#6272a4>// we don&#39;t care whether the input is technically valid or not, just simulate what happens if it isn&#39;t
+</span><span style=color:#6272a4></span>    mockValidator.Setup(v =&gt; v.Validate(It.IsAny&lt;Foo&gt;())).Throws&lt;ValidationException&gt;();
+
+    Action action = () =&gt; <span style=color:#ff79c6>this</span>.service.Create(<span style=color:#ff79c6>new</span> Foo());
+
+    action.Should().Throw&lt;ValidationException&gt;();
+}
+</code></pre></div></li>
+<li>if the argument to the mock is generated at runtime within the system under test (e.g. an object created with <code>new</code> or
+a callback function), so you can&rsquo;t possibly create a setup for it:
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cs data-lang=cs><span style=color:#6272a4>// in SUT code... clear the cache whenever a message is received
+</span><span style=color:#6272a4></span>notifier.Subscribe(<span style=color:#f1fa8c>&#34;some-pubsub-stream&#34;</span>, () =&gt; <span style=color:#ff79c6>this</span>.cache.Invalidate());
+
+<span style=color:#6272a4>// in a test... you want to simulate the callback happening
+</span><span style=color:#6272a4></span>Action callback = <span style=color:#ff79c6>null</span>;
+mockNotifier.Setup(n =&gt; n.Subscribe(<span style=color:#f1fa8c>&#34;some-pubsub-stream&#34;</span>, It.IsAny&lt;Action&gt;()))
+            .Callback((Action captured) =&gt; callback = captured); <span style=color:#6272a4>// capture the callback
+</span><span style=color:#6272a4></span>
+<span style=color:#6272a4>// simulate a message being received
+</span><span style=color:#6272a4></span>callback();
+
+<span style=color:#6272a4>// make sure the callback had the appropriate effect
+</span><span style=color:#6272a4></span>mockCache.Verify(c =&gt; c.Invalidate(), Times.Once);
+</code></pre></div></li>
+<li>Creating happy path defaults that you&rsquo;ll override in certain instances:
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cs data-lang=cs><span style=color:#ff79c6>public</span> Tests()
+{
+    <span style=color:#ff79c6>this</span>.mockValidator = <span style=color:#ff79c6>new</span> Mock&lt;IValidator&gt;();
+
+    <span style=color:#6272a4>// default to passing validation
+</span><span style=color:#6272a4></span>    <span style=color:#ff79c6>this</span>.mockValidator.Setup(v =&gt; v.Validate(It.IsAny&lt;Foo&gt;()).Returns(<span style=color:#ff79c6>true</span>);
+}
+<span style=color:#50fa7b>
+</span><span style=color:#50fa7b>[Fact]</span>
+<span style=color:#ff79c6>public</span> <span style=color:#ff79c6>void</span> Create_SuccessfullyCreated_ReturnsSuccessfulResponse()
+{
+    <span style=color:#6272a4>// no setup required on validator, we&#39;ll just assume the input is valid
+</span><span style=color:#6272a4></span>    <span style=color:#8be9fd>var</span> expected = <span style=color:#ff79c6>new</span> SuccessResponse();
+
+    <span style=color:#8be9fd>var</span> response = sut.Create(<span style=color:#ff79c6>new</span> Foo());
+
+    response.Should().Equal(expected);
+}
+<span style=color:#50fa7b>
+</span><span style=color:#50fa7b>[Fact]</span>
+<span style=color:#ff79c6>public</span> <span style=color:#ff79c6>void</span> Create_InvalidInput_ThrowsValidationException()
+{
+    <span style=color:#6272a4>// override the default setup to simulate what happens with invalid input
+</span><span style=color:#6272a4></span>    <span style=color:#ff79c6>this</span>.mockValidator.Setup(v =&gt; v.Validate(It.IsAny&lt;Foo&gt;()).Throws&lt;ValidationException&gt;();
+
+    <span style=color:#6272a4>// ... test the exception is thrown as before
+</span><span style=color:#6272a4></span>}
+</code></pre></div></li>
+</ul>
+<p>It&rsquo;s also worth noting that that&rsquo;s not the only test you need, even for the happy path. For example, the test would
+still pass if the implementation was hard-coded to always pass <code>SortOrder.Descending</code> so there should be another test
+that passes <code>SortOrder.Ascending</code>. It&rsquo;s better to use a parameterised test for this exact instance:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cs data-lang=cs><span style=color:#50fa7b>[Theory]</span>
+<span style=color:#50fa7b>[InlineData(SortOrder.Ascending)]</span>
+<span style=color:#50fa7b>[InlineData(SortOrder.Descending)]</span>
+<span style=color:#ff79c6>public</span> <span style=color:#ff79c6>void</span> GetFoos_WhenCalled_ReturnsFilteredAndSortedResponse(SortOrder sortOrder)
+{
+    <span style=color:#6272a4>// ... 
+</span><span style=color:#6272a4></span>    <span style=color:#ff79c6>this</span>.mockSorter.Setup(r =&gt; r.Sort(filtered, sortOrder)).Returns(expected);
+                   
+    <span style=color:#8be9fd>var</span> actual = <span style=color:#ff79c6>this</span>.service.GetFoos(filterParameters, sortOrder);
+    
+    actual.Should().Equal(expected);
+}
+</code></pre></div><p>You also need tests to verify what happens if those dependencies throw exceptions (if they can throw exceptions) or
+return nulls (if they can return nulls). You <em>don&rsquo;t</em> need tests for the actual filtering/sorting logic here. Those
+will be covered in the tests for the filter/sorter classes (which is one good reason to move them to their own classes
+in the first place, following the Single Responsibility Principle). This allows us to use <a href=https://github.com/AutoFixture/AutoFixture>AutoFixture</a> to generate the
+outputs of the repository/filter/sorter because the service class never needs to rely on those outputs having a
+sensible value; it just needs to be concerned with co-ordinating the process with the dependencies properly.</p>
+</div>
+<div>
+<ul class=tags></ul>
+</div>
+<div class=share-buttons>
+<a class=twitter-share-button href=# title="Share on Twitter" data-url=https://adamrodger.github.io/post/2018-10-25-unit-testing-with-mocks/ data-text="Unit Testing with Mocks"><i class="fab fa-twitter"></i></a>
+<a class=linkedin-share-button href=# title="Share on LinkedIn" data-url=https://adamrodger.github.io/post/2018-10-25-unit-testing-with-mocks/ data-text="Unit Testing with Mocks"><i class="fab fa-linkedin-in"></i></a>
+<a class=facebook-share-button href=# title="Share on Facebook" data-url=https://adamrodger.github.io/post/2018-10-25-unit-testing-with-mocks/ data-text="Unit Testing with Mocks"><i class="fab fa-facebook"></i></a>
+<a class=telegram-share-button href=# title="Share on Telegram" data-url=https://adamrodger.github.io/post/2018-10-25-unit-testing-with-mocks/ data-text="Unit Testing with Mocks"><i class="fab fa-telegram"></i></a>
+<a class=pinterest-share-button href=# title="Share on Pinterest" data-url=https://adamrodger.github.io/post/2018-10-25-unit-testing-with-mocks/ data-text="Unit Testing with Mocks"><i class="fab fa-pinterest"></i></a>
+</div>
+</div>
+</main>
+<footer>
+<div>
+<p>
+&copy; Adam Rodger 2021
+&#183; <a href=https://creativecommons.org/licenses/by-sa/4.0 target=_blank>CC BY-SA 4.0</a>
+</p>
+</div>
+</footer>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/js/all.min.js integrity="sha256-MAgcygDRahs+F/Nk5Vz387whB4kSK9NXlDN3w58LLq0=" crossorigin=anonymous></script>
+<script src=/js/jquery.min.js></script>
+<script src=/js/soho.js></script>
+</body>
+</html>
