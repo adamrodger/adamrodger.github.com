@@ -19,10 +19,10 @@ At dunnhumby, we use a squad based approach to application development which see
 <meta property="og:description" content="In a microservices architecture with a suite of inter-dependent services, ensuring fast feedback when API changes cause incompatibility becomes a key problem. Any time that incompatible services are deployed to an environment you will have caused a preventable outage that should be detected as part of your usual Continuous Integration solution.
 At dunnhumby, we use a squad based approach to application development which sees small &lsquo;vertical&rsquo; teams form with team members representing all of the &lsquo;horizontals&rsquo;, such as API, UI and QA.">
 <meta property="og:type" content="article">
-<meta property="og:url" content="https://adamrodger.github.io/post/2018-07-05-consumer-driven-contracts/"><meta property="article:section" content="post">
+<meta property="og:url" content="https://adamrodger.com/post/2018-07-05-consumer-driven-contracts/"><meta property="article:section" content="post">
 <meta property="article:published_time" content="2018-07-05T00:00:00+00:00">
 <meta property="article:modified_time" content="2018-07-05T00:00:00+00:00">
-<script type=application/ld+json>{"@context":"https://schema.org","@graph":[{"@type":"Person","@id":"https://adamrodger.github.io#author","name":"Adam Rodger","image":{"@type":"ImageObject","url":"https://adamrodger.github.io/images/profile.jpg"},"description":"Blog"},{"@type":"WebSite","@id":"https://adamrodger.github.io#website","url":"https://adamrodger.github.io","name":"Adam Rodger","description":"Blog","publisher":{"@id":"https://adamrodger.github.io#author"},"inLanguage":"en"},{"@type":"WebPage","@id":"https://adamrodger.github.io/post/2018-07-05-consumer-driven-contracts/#webpage","url":"https://adamrodger.github.io/post/2018-07-05-consumer-driven-contracts/","name":"Service Evolution with Consumer Driven Contracts and Pact","isPartOf":{"@id":"https://adamrodger.github.io#website"},"about":{"@id":"https://adamrodger.github.io#author"},"datePublished":"2018-07-05T00:00:00+00:00","dateModified":"2018-07-05T00:00:00+00:00","description":"In a microservices architecture with a suite of inter-dependent services, ensuring fast feedback when API changes cause incompatibility becomes a key problem. Any time that incompatible services are deployed to an environment you will have caused a preventable outage that should be detected as part of your usual Continuous Integration solution.\nAt dunnhumby, we use a squad based approach to application development which sees small \u0026lsquo;vertical\u0026rsquo; teams form with team members representing all of the \u0026lsquo;horizontals\u0026rsquo;, such as API, UI and QA.","inLanguage":"en","potentialAction":[{"@type":"ReadAction","target":["https://adamrodger.github.io/post/2018-07-05-consumer-driven-contracts/"]}]},{"@type":"Article","isPartOf":{"@id":"https://adamrodger.github.io/post/2018-07-05-consumer-driven-contracts/#webpage"},"mainEntityOfPage":{"@id":"https://adamrodger.github.io/post/2018-07-05-consumer-driven-contracts/#webpage"},"headline":"Service Evolution with Consumer Driven Contracts and Pact","datePublished":"2018-07-05T00:00:00+00:00","dateModified":"2018-07-05T00:00:00+00:00","publisher":{"@id":"https://adamrodger.github.io#author"},"keywords":[],"articleSection":[],"inLanguage":"en","author":{"@type":"Person","name":null},"potentialAction":[{"@type":"CommentAction","name":"Comment","target":["https://adamrodger.github.io/post/2018-07-05-consumer-driven-contracts/#comments"]}]}]}</script>
+<script type=application/ld+json>{"@context":"https://schema.org","@graph":[{"@type":"Person","@id":"https://adamrodger.com#author","name":"Adam Rodger","image":{"@type":"ImageObject","url":"https://adamrodger.com/images/profile.jpg"},"description":"Blog"},{"@type":"WebSite","@id":"https://adamrodger.com#website","url":"https://adamrodger.com","name":"Adam Rodger","description":"Blog","publisher":{"@id":"https://adamrodger.com#author"},"inLanguage":"en"},{"@type":"WebPage","@id":"https://adamrodger.com/post/2018-07-05-consumer-driven-contracts/#webpage","url":"https://adamrodger.com/post/2018-07-05-consumer-driven-contracts/","name":"Service Evolution with Consumer Driven Contracts and Pact","isPartOf":{"@id":"https://adamrodger.com#website"},"about":{"@id":"https://adamrodger.com#author"},"datePublished":"2018-07-05T00:00:00+00:00","dateModified":"2018-07-05T00:00:00+00:00","description":"In a microservices architecture with a suite of inter-dependent services, ensuring fast feedback when API changes cause incompatibility becomes a key problem. Any time that incompatible services are deployed to an environment you will have caused a preventable outage that should be detected as part of your usual Continuous Integration solution.\nAt dunnhumby, we use a squad based approach to application development which sees small \u0026lsquo;vertical\u0026rsquo; teams form with team members representing all of the \u0026lsquo;horizontals\u0026rsquo;, such as API, UI and QA.","inLanguage":"en","potentialAction":[{"@type":"ReadAction","target":["https://adamrodger.com/post/2018-07-05-consumer-driven-contracts/"]}]},{"@type":"Article","isPartOf":{"@id":"https://adamrodger.com/post/2018-07-05-consumer-driven-contracts/#webpage"},"mainEntityOfPage":{"@id":"https://adamrodger.com/post/2018-07-05-consumer-driven-contracts/#webpage"},"headline":"Service Evolution with Consumer Driven Contracts and Pact","datePublished":"2018-07-05T00:00:00+00:00","dateModified":"2018-07-05T00:00:00+00:00","publisher":{"@id":"https://adamrodger.com#author"},"keywords":[],"articleSection":[],"inLanguage":"en","author":{"@type":"Person","name":null},"potentialAction":[{"@type":"CommentAction","name":"Comment","target":["https://adamrodger.com/post/2018-07-05-consumer-driven-contracts/#comments"]}]}]}</script>
 <link type=text/css rel=stylesheet href=/css/print.css media=print>
 <link type=text/css rel=stylesheet href=/css/poole.css>
 <link type=text/css rel=stylesheet href=/css/hyde.css>
@@ -38,7 +38,7 @@ At dunnhumby, we use a squad based approach to application development which see
 <div class=container>
 <div class=sidebar-about>
 <div class=author-image>
-<a href=https://adamrodger.github.io>
+<a href=https://adamrodger.com>
 <img src=/images/profile.jpg class="img-circle img-headshot center" alt="Profile Picture">
 </a>
 </div>
@@ -48,7 +48,7 @@ At dunnhumby, we use a squad based approach to application development which see
 <nav>
 <ul class=sidebar-nav>
 <li>
-<a href=https://adamrodger.github.io>Home</a>
+<a href=https://adamrodger.com>Home</a>
 </li>
 </ul>
 </nav>
@@ -288,11 +288,11 @@ introducing this pattern has been a great success for us.</p>
 <ul class=tags></ul>
 </div>
 <div class=share-buttons>
-<a class=twitter-share-button href=# title="Share on Twitter" data-url=https://adamrodger.github.io/post/2018-07-05-consumer-driven-contracts/ data-text="Service Evolution with Consumer Driven Contracts and Pact"><i class="fab fa-twitter"></i></a>
-<a class=linkedin-share-button href=# title="Share on LinkedIn" data-url=https://adamrodger.github.io/post/2018-07-05-consumer-driven-contracts/ data-text="Service Evolution with Consumer Driven Contracts and Pact"><i class="fab fa-linkedin-in"></i></a>
-<a class=facebook-share-button href=# title="Share on Facebook" data-url=https://adamrodger.github.io/post/2018-07-05-consumer-driven-contracts/ data-text="Service Evolution with Consumer Driven Contracts and Pact"><i class="fab fa-facebook"></i></a>
-<a class=telegram-share-button href=# title="Share on Telegram" data-url=https://adamrodger.github.io/post/2018-07-05-consumer-driven-contracts/ data-text="Service Evolution with Consumer Driven Contracts and Pact"><i class="fab fa-telegram"></i></a>
-<a class=pinterest-share-button href=# title="Share on Pinterest" data-url=https://adamrodger.github.io/post/2018-07-05-consumer-driven-contracts/ data-text="Service Evolution with Consumer Driven Contracts and Pact"><i class="fab fa-pinterest"></i></a>
+<a class=twitter-share-button href=# title="Share on Twitter" data-url=https://adamrodger.com/post/2018-07-05-consumer-driven-contracts/ data-text="Service Evolution with Consumer Driven Contracts and Pact"><i class="fab fa-twitter"></i></a>
+<a class=linkedin-share-button href=# title="Share on LinkedIn" data-url=https://adamrodger.com/post/2018-07-05-consumer-driven-contracts/ data-text="Service Evolution with Consumer Driven Contracts and Pact"><i class="fab fa-linkedin-in"></i></a>
+<a class=facebook-share-button href=# title="Share on Facebook" data-url=https://adamrodger.com/post/2018-07-05-consumer-driven-contracts/ data-text="Service Evolution with Consumer Driven Contracts and Pact"><i class="fab fa-facebook"></i></a>
+<a class=telegram-share-button href=# title="Share on Telegram" data-url=https://adamrodger.com/post/2018-07-05-consumer-driven-contracts/ data-text="Service Evolution with Consumer Driven Contracts and Pact"><i class="fab fa-telegram"></i></a>
+<a class=pinterest-share-button href=# title="Share on Pinterest" data-url=https://adamrodger.com/post/2018-07-05-consumer-driven-contracts/ data-text="Service Evolution with Consumer Driven Contracts and Pact"><i class="fab fa-pinterest"></i></a>
 </div>
 </div>
 </main>

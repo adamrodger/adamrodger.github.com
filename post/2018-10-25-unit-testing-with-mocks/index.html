@@ -16,10 +16,10 @@
 <meta property="og:title" content="Unit Testing with Mocks">
 <meta property="og:description" content="When unit testing classes that have followed SOLID principles, we often find classes take on the responsibility of a co-ordinator rather than implementing any specific logic themselves. When testing these classes it makes perfect sense to use mocks (e.g. the Moq library) to control the dependencies being co-ordinated. However, I sometimes see instances where people have misunderstood how these mocks work and why the test ends up not testing what it appears to.">
 <meta property="og:type" content="article">
-<meta property="og:url" content="https://adamrodger.github.io/post/2018-10-25-unit-testing-with-mocks/"><meta property="article:section" content="post">
+<meta property="og:url" content="https://adamrodger.com/post/2018-10-25-unit-testing-with-mocks/"><meta property="article:section" content="post">
 <meta property="article:published_time" content="2018-10-25T00:00:00+00:00">
 <meta property="article:modified_time" content="2018-10-25T00:00:00+00:00">
-<script type=application/ld+json>{"@context":"https://schema.org","@graph":[{"@type":"Person","@id":"https://adamrodger.github.io#author","name":"Adam Rodger","image":{"@type":"ImageObject","url":"https://adamrodger.github.io/images/profile.jpg"},"description":"Blog"},{"@type":"WebSite","@id":"https://adamrodger.github.io#website","url":"https://adamrodger.github.io","name":"Adam Rodger","description":"Blog","publisher":{"@id":"https://adamrodger.github.io#author"},"inLanguage":"en"},{"@type":"WebPage","@id":"https://adamrodger.github.io/post/2018-10-25-unit-testing-with-mocks/#webpage","url":"https://adamrodger.github.io/post/2018-10-25-unit-testing-with-mocks/","name":"Unit Testing with Mocks","isPartOf":{"@id":"https://adamrodger.github.io#website"},"about":{"@id":"https://adamrodger.github.io#author"},"datePublished":"2018-10-25T00:00:00+00:00","dateModified":"2018-10-25T00:00:00+00:00","description":"When unit testing classes that have followed SOLID principles, we often find classes take on the responsibility of a co-ordinator rather than implementing any specific logic themselves. When testing these classes it makes perfect sense to use mocks (e.g. the Moq library) to control the dependencies being co-ordinated. However, I sometimes see instances where people have misunderstood how these mocks work and why the test ends up not testing what it appears to.","inLanguage":"en","potentialAction":[{"@type":"ReadAction","target":["https://adamrodger.github.io/post/2018-10-25-unit-testing-with-mocks/"]}]},{"@type":"Article","isPartOf":{"@id":"https://adamrodger.github.io/post/2018-10-25-unit-testing-with-mocks/#webpage"},"mainEntityOfPage":{"@id":"https://adamrodger.github.io/post/2018-10-25-unit-testing-with-mocks/#webpage"},"headline":"Unit Testing with Mocks","datePublished":"2018-10-25T00:00:00+00:00","dateModified":"2018-10-25T00:00:00+00:00","publisher":{"@id":"https://adamrodger.github.io#author"},"keywords":[],"articleSection":[],"inLanguage":"en","author":{"@type":"Person","name":null},"potentialAction":[{"@type":"CommentAction","name":"Comment","target":["https://adamrodger.github.io/post/2018-10-25-unit-testing-with-mocks/#comments"]}]}]}</script>
+<script type=application/ld+json>{"@context":"https://schema.org","@graph":[{"@type":"Person","@id":"https://adamrodger.com#author","name":"Adam Rodger","image":{"@type":"ImageObject","url":"https://adamrodger.com/images/profile.jpg"},"description":"Blog"},{"@type":"WebSite","@id":"https://adamrodger.com#website","url":"https://adamrodger.com","name":"Adam Rodger","description":"Blog","publisher":{"@id":"https://adamrodger.com#author"},"inLanguage":"en"},{"@type":"WebPage","@id":"https://adamrodger.com/post/2018-10-25-unit-testing-with-mocks/#webpage","url":"https://adamrodger.com/post/2018-10-25-unit-testing-with-mocks/","name":"Unit Testing with Mocks","isPartOf":{"@id":"https://adamrodger.com#website"},"about":{"@id":"https://adamrodger.com#author"},"datePublished":"2018-10-25T00:00:00+00:00","dateModified":"2018-10-25T00:00:00+00:00","description":"When unit testing classes that have followed SOLID principles, we often find classes take on the responsibility of a co-ordinator rather than implementing any specific logic themselves. When testing these classes it makes perfect sense to use mocks (e.g. the Moq library) to control the dependencies being co-ordinated. However, I sometimes see instances where people have misunderstood how these mocks work and why the test ends up not testing what it appears to.","inLanguage":"en","potentialAction":[{"@type":"ReadAction","target":["https://adamrodger.com/post/2018-10-25-unit-testing-with-mocks/"]}]},{"@type":"Article","isPartOf":{"@id":"https://adamrodger.com/post/2018-10-25-unit-testing-with-mocks/#webpage"},"mainEntityOfPage":{"@id":"https://adamrodger.com/post/2018-10-25-unit-testing-with-mocks/#webpage"},"headline":"Unit Testing with Mocks","datePublished":"2018-10-25T00:00:00+00:00","dateModified":"2018-10-25T00:00:00+00:00","publisher":{"@id":"https://adamrodger.com#author"},"keywords":[],"articleSection":[],"inLanguage":"en","author":{"@type":"Person","name":null},"potentialAction":[{"@type":"CommentAction","name":"Comment","target":["https://adamrodger.com/post/2018-10-25-unit-testing-with-mocks/#comments"]}]}]}</script>
 <link type=text/css rel=stylesheet href=/css/print.css media=print>
 <link type=text/css rel=stylesheet href=/css/poole.css>
 <link type=text/css rel=stylesheet href=/css/hyde.css>
@@ -35,7 +35,7 @@
 <div class=container>
 <div class=sidebar-about>
 <div class=author-image>
-<a href=https://adamrodger.github.io>
+<a href=https://adamrodger.com>
 <img src=/images/profile.jpg class="img-circle img-headshot center" alt="Profile Picture">
 </a>
 </div>
@@ -45,7 +45,7 @@
 <nav>
 <ul class=sidebar-nav>
 <li>
-<a href=https://adamrodger.github.io>Home</a>
+<a href=https://adamrodger.com>Home</a>
 </li>
 </ul>
 </nav>
@@ -261,11 +261,11 @@ sensible value; it just needs to be concerned with co-ordinating the process wit
 <ul class=tags></ul>
 </div>
 <div class=share-buttons>
-<a class=twitter-share-button href=# title="Share on Twitter" data-url=https://adamrodger.github.io/post/2018-10-25-unit-testing-with-mocks/ data-text="Unit Testing with Mocks"><i class="fab fa-twitter"></i></a>
-<a class=linkedin-share-button href=# title="Share on LinkedIn" data-url=https://adamrodger.github.io/post/2018-10-25-unit-testing-with-mocks/ data-text="Unit Testing with Mocks"><i class="fab fa-linkedin-in"></i></a>
-<a class=facebook-share-button href=# title="Share on Facebook" data-url=https://adamrodger.github.io/post/2018-10-25-unit-testing-with-mocks/ data-text="Unit Testing with Mocks"><i class="fab fa-facebook"></i></a>
-<a class=telegram-share-button href=# title="Share on Telegram" data-url=https://adamrodger.github.io/post/2018-10-25-unit-testing-with-mocks/ data-text="Unit Testing with Mocks"><i class="fab fa-telegram"></i></a>
-<a class=pinterest-share-button href=# title="Share on Pinterest" data-url=https://adamrodger.github.io/post/2018-10-25-unit-testing-with-mocks/ data-text="Unit Testing with Mocks"><i class="fab fa-pinterest"></i></a>
+<a class=twitter-share-button href=# title="Share on Twitter" data-url=https://adamrodger.com/post/2018-10-25-unit-testing-with-mocks/ data-text="Unit Testing with Mocks"><i class="fab fa-twitter"></i></a>
+<a class=linkedin-share-button href=# title="Share on LinkedIn" data-url=https://adamrodger.com/post/2018-10-25-unit-testing-with-mocks/ data-text="Unit Testing with Mocks"><i class="fab fa-linkedin-in"></i></a>
+<a class=facebook-share-button href=# title="Share on Facebook" data-url=https://adamrodger.com/post/2018-10-25-unit-testing-with-mocks/ data-text="Unit Testing with Mocks"><i class="fab fa-facebook"></i></a>
+<a class=telegram-share-button href=# title="Share on Telegram" data-url=https://adamrodger.com/post/2018-10-25-unit-testing-with-mocks/ data-text="Unit Testing with Mocks"><i class="fab fa-telegram"></i></a>
+<a class=pinterest-share-button href=# title="Share on Pinterest" data-url=https://adamrodger.com/post/2018-10-25-unit-testing-with-mocks/ data-text="Unit Testing with Mocks"><i class="fab fa-pinterest"></i></a>
 </div>
 </div>
 </main>
