@@ -1,0 +1,310 @@
+<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=generator content="Hugo 0.88.1">
+<title>The Typestate Pattern in C# - Redesigning PactNet &#183; Adam Rodger</title>
+<meta name=description content>
+<meta itemprop=name content="The Typestate Pattern in C# - Redesigning PactNet">
+<meta itemprop=description content="The typestate pattern uses the static type system of a language to move potential runtime errors to compile time errors instead. This article discusses the redesign of PactNet v4.0.0 to use that pattern to make code which would create invalid conditions impossible to compile instead of erroring at runtime.
+Pact creates a contract between a consumer and a provider which can be verified during Continuous Integration to ensure that both components are compatible before they&rsquo;re deployed to an environment."><meta itemprop=datePublished content="2021-10-13T00:00:00+00:00">
+<meta itemprop=dateModified content="2021-10-13T00:00:00+00:00">
+<meta itemprop=wordCount content="1494">
+<meta itemprop=keywords content=".net dotnet pact rest api testing,">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="The Typestate Pattern in C# - Redesigning PactNet">
+<meta name=twitter:description content="The typestate pattern uses the static type system of a language to move potential runtime errors to compile time errors instead. This article discusses the redesign of PactNet v4.0.0 to use that pattern to make code which would create invalid conditions impossible to compile instead of erroring at runtime.
+Pact creates a contract between a consumer and a provider which can be verified during Continuous Integration to ensure that both components are compatible before they&rsquo;re deployed to an environment.">
+<meta property="og:title" content="The Typestate Pattern in C# - Redesigning PactNet">
+<meta property="og:description" content="The typestate pattern uses the static type system of a language to move potential runtime errors to compile time errors instead. This article discusses the redesign of PactNet v4.0.0 to use that pattern to make code which would create invalid conditions impossible to compile instead of erroring at runtime.
+Pact creates a contract between a consumer and a provider which can be verified during Continuous Integration to ensure that both components are compatible before they&rsquo;re deployed to an environment.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://adamrodger.com/post/2021-10-13-typestate-pattern-in-csharp/"><meta property="article:section" content="post">
+<meta property="article:published_time" content="2021-10-13T00:00:00+00:00">
+<meta property="article:modified_time" content="2021-10-13T00:00:00+00:00">
+<script type=application/ld+json>{"@context":"https://schema.org","@graph":[{"@type":"Person","@id":"https://adamrodger.com#author","name":"Adam Rodger","image":{"@type":"ImageObject","url":"https://adamrodger.com/images/profile.jpg"},"description":"Blog"},{"@type":"WebSite","@id":"https://adamrodger.com#website","url":"https://adamrodger.com","name":"Adam Rodger","description":"Blog","publisher":{"@id":"https://adamrodger.com#author"},"inLanguage":"en"},{"@type":"WebPage","@id":"https://adamrodger.com/post/2021-10-13-typestate-pattern-in-csharp/#webpage","url":"https://adamrodger.com/post/2021-10-13-typestate-pattern-in-csharp/","name":"The Typestate Pattern in C# - Redesigning PactNet","isPartOf":{"@id":"https://adamrodger.com#website"},"about":{"@id":"https://adamrodger.com#author"},"datePublished":"2021-10-13T00:00:00+00:00","dateModified":"2021-10-13T00:00:00+00:00","description":"The typestate pattern uses the static type system of a language to move potential runtime errors to compile time errors instead. This article discusses the redesign of PactNet v4.0.0 to use that pattern to make code which would create invalid conditions impossible to compile instead of erroring at runtime.\nPact creates a contract between a consumer and a provider which can be verified during Continuous Integration to ensure that both components are compatible before they\u0026rsquo;re deployed to an environment.","inLanguage":"en","potentialAction":[{"@type":"ReadAction","target":["https://adamrodger.com/post/2021-10-13-typestate-pattern-in-csharp/"]}]},{"@type":"Article","isPartOf":{"@id":"https://adamrodger.com/post/2021-10-13-typestate-pattern-in-csharp/#webpage"},"mainEntityOfPage":{"@id":"https://adamrodger.com/post/2021-10-13-typestate-pattern-in-csharp/#webpage"},"headline":"The Typestate Pattern in C# - Redesigning PactNet","datePublished":"2021-10-13T00:00:00+00:00","dateModified":"2021-10-13T00:00:00+00:00","publisher":{"@id":"https://adamrodger.com#author"},"keywords":[],"articleSection":[],"inLanguage":"en","author":{"@type":"Person","name":null},"potentialAction":[{"@type":"CommentAction","name":"Comment","target":["https://adamrodger.com/post/2021-10-13-typestate-pattern-in-csharp/#comments"]}]}]}</script>
+<link type=text/css rel=stylesheet href=/css/print.css media=print>
+<link type=text/css rel=stylesheet href=/css/poole.css>
+<link type=text/css rel=stylesheet href=/css/hyde.css>
+<style type=text/css>.sidebar{background-color:#4e5964}.read-more-link a{border-color:#4e5964}.read-more-link a:hover{background-color:#4e5964}.pagination li a{color:#4e5964;border:1px solid #4e5964}.pagination li.active a{background-color:#4e5964}.pagination li a:hover{background-color:#4e5964;opacity:.75}footer a,.content a,.related-posts li a:hover{color:#4e5964}</style>
+<link type=text/css rel=stylesheet href=/css/blog.css>
+<link rel=stylesheet href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700&display=swap">
+<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin=anonymous>
+<link rel=apple-touch-icon-precomposed sizes=144x144 href=/apple-touch-icon-144-precomposed.png>
+<link rel="shortcut icon" href=/favicon.png>
+</head>
+<body>
+<aside class=sidebar>
+<div class=container>
+<div class=sidebar-about>
+<div class=author-image>
+<a href=https://adamrodger.com>
+<img src=/images/profile.jpg class="img-circle img-headshot center" alt="Profile Picture">
+</a>
+</div>
+<h1>Adam Rodger</h1>
+<p class=lead>Blog</p>
+</div>
+<nav>
+<ul class=sidebar-nav>
+<li>
+<a href=https://adamrodger.com>Home</a>
+</li>
+</ul>
+</nav>
+<section class=social-icons>
+<a href=https://www.linkedin.com/in/adamrodger/ rel=me title=Linkedin target=_blank>
+<i class="fab fa-linkedin" aria-hidden=true></i>
+</a>
+<a href=https://github.com/adamrodger rel=me title=GitHub target=_blank>
+<i class="fab fa-github" aria-hidden=true></i>
+</a>
+<a href=https://twitter.com/adamrodger rel=me title=Twitter target=_blank>
+<i class="fab fa-twitter" aria-hidden=true></i>
+</a>
+<a href=https://stackoverflow.com/users/429541/adam-rodger rel=me title=StackOverflow target=_blank>
+<i class="fab fa-stack-overflow" aria-hidden=true></i>
+</a>
+</section>
+</div>
+</aside>
+<main class="content container">
+<div class=post>
+<h1 class=title>The Typestate Pattern in C# - Redesigning PactNet</h1>
+<div class=post-date>
+<time datetime=2021-10-13T00:00:00Z>Oct 13, 2021</time> <span class=readtime>&#183; 8 min read</span>
+</div>
+<div>
+<p>The typestate pattern uses the static type system of a language to move potential runtime errors to
+compile time errors instead. This article discusses the redesign of <a href=https://github.com/pact-foundation/pact-net>PactNet</a> v4.0.0 to use that pattern
+to make code which would create invalid conditions impossible to compile instead of erroring at runtime.</p>
+<p><a href=https://pact.io/>Pact</a> creates a contract between a consumer and a provider which can be verified during Continuous Integration
+to ensure that both components are compatible before they&rsquo;re deployed to an environment. The <strong>consumer</strong> creates
+expectations which are exported in a format defined by the Pact Specification, then the file is later used to
+automate requests against the <strong>provider</strong> and verify the results are compatible.</p>
+<h2 id=a-simple-fluent-builder-pattern>A Simple Fluent Builder Pattern</h2>
+<p>Prior to PactNet v4, a provider test was typically built up using a fluent builder, which is a familiar pattern
+where a series of method calls establish the state, and each method returns the builder so that you can chain
+them all together.</p>
+<p>The example from the documentation for provider tests looks like this (slightly trimmed for brevity):</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=color:#ff79c6>const</span> <span style=color:#8be9fd>string</span> serviceUri = <span style=color:#f1fa8c>&#34;http://localhost:9222&#34;</span>;
+
+<span style=color:#ff79c6>using</span> (WebApp.Start&lt;TestStartup&gt;(serviceUri))
+{
+    IPactVerifier pactVerifier = <span style=color:#ff79c6>new</span> PactVerifier();
+
+    <span style=color:#8be9fd>var</span> pactUriOptions = <span style=color:#ff79c6>new</span> PactUriOptions()
+        .SetBasicAuthentication(<span style=color:#f1fa8c>&#34;someuser&#34;</span>, <span style=color:#f1fa8c>&#34;somepassword&#34;</span>) <span style=color:#6272a4>// you can specify basic auth details
+</span><span style=color:#6272a4></span>        <span style=color:#6272a4>// or
+</span><span style=color:#6272a4></span>        .SetBearerAuthentication(<span style=color:#f1fa8c>&#34;sometoken&#34;</span>); <span style=color:#6272a4>// Or a bearer token
+</span><span style=color:#6272a4></span>
+    pactVerifier
+        .ProviderState(<span style=color:#f1fa8c>$&#34;{serviceUri}/provider-states&#34;</span>)
+        .ServiceProvider(<span style=color:#f1fa8c>&#34;Something API&#34;</span>, serviceUri)
+        .HonoursPactWith(<span style=color:#f1fa8c>&#34;Consumer&#34;</span>)
+        <span style=color:#6272a4>// use a file on disk
+</span><span style=color:#6272a4></span>        .PactUri(<span style=color:#f1fa8c>&#34;..\\..\\..\\Consumer.Tests\\pacts\\consumer-something_api.json&#34;</span>)
+        <span style=color:#6272a4>// or grab a file from a web host
+</span><span style=color:#6272a4></span>        .PactUri(<span style=color:#f1fa8c>&#34;http://broker.example.org/pacts/provider/Something%20Api/consumer/Consumer/latest&#34;</span>, pactUriOptions)
+        <span style=color:#6272a4>// or if you&#39;re using the Pact Broker
+</span><span style=color:#6272a4></span>        .PactBroker(<span style=color:#f1fa8c>&#34;http://broker.example.org&#34;</span>, pactUriOptions)
+        .Verify();
+}
+</code></pre></div><p>On the face of this the API appears quite friendly, however this is only really the case if you follow the
+convention defined above and follow all those &ldquo;and/or&rdquo; instructions. In reality, the interface is defined
+something like this (again trimmed for brevity):</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=color:#ff79c6>public</span> <span style=color:#ff79c6>interface</span> IPactVerifier
+{
+    IPactVerifier ProviderState(<span style=color:#8be9fd>string</span> providerStateSetupUri);
+    IPactVerifier ServiceProvider(<span style=color:#8be9fd>string</span> providerName, <span style=color:#8be9fd>string</span> baseUri);
+    IPactVerifier HonoursPactWith(<span style=color:#8be9fd>string</span> consumerName);
+    IPactVerifier PactUri(<span style=color:#8be9fd>string</span> fileUri, PactUriOptions options = <span style=color:#ff79c6>null</span>);
+    IPactVerifier PactBroker(<span style=color:#8be9fd>string</span> brokerBaseUri, PactUriOptions uriOptions = <span style=color:#ff79c6>null</span>);
+    <span style=color:#ff79c6>void</span> Verify();
+}
+</code></pre></div><p>The problem with this approach is that you can potentially create invalid or nonsensical states:</p>
+<ul>
+<li>You could define both a <code>PactUri</code> and <code>PactBroker</code> source and then it&rsquo;s unclear what would happen. Does it use both? (spoiler: it doesn&rsquo;t)</li>
+<li>You could omit the provider or consumer name, or define them multiple times</li>
+<li>You could specify both HTTP and Bearer auth on <code>PactUriOptions</code></li>
+<li>You could provide <code>PactUriOptions</code> when using a local file path, which makes no sense</li>
+<li>&mldr;and many more!</li>
+</ul>
+<p>To catch these problems at runtime and try to enforce some kind of order and correctness, the implementation has to have
+lots of runtime checks to make sure you didn&rsquo;t create an invalid state. The <code>Verify</code> implementation has to have these checks:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=color:#ff79c6>public</span> <span style=color:#ff79c6>void</span> Verify()
+{
+    <span style=color:#ff79c6>if</span> (ProviderName == <span style=color:#ff79c6>null</span>)
+    {
+        <span style=color:#ff79c6>throw</span> <span style=color:#ff79c6>new</span> InvalidOperationException(
+            <span style=color:#f1fa8c>&#34;providerName has not been set, please supply a service providerName using the ServiceProvider method.&#34;</span>);
+    }
+
+    <span style=color:#ff79c6>if</span> (ServiceBaseUri == <span style=color:#ff79c6>null</span>)
+    {
+        <span style=color:#ff79c6>throw</span> <span style=color:#ff79c6>new</span> InvalidOperationException(
+            <span style=color:#f1fa8c>&#34;baseUri has not been set, please supply a service baseUri using the ServiceProvider method.&#34;</span>);
+    }
+
+    <span style=color:#ff79c6>if</span> (IsNullOrEmpty(PactFileUri) &amp;&amp; IsNullOrEmpty(BrokerBaseUri))
+    {
+        <span style=color:#ff79c6>throw</span> <span style=color:#ff79c6>new</span> InvalidOperationException(
+            <span style=color:#f1fa8c>&#34;PactFileUri or BrokerBaseUri has not been set, please supply a uri using the PactUri or PactBroker method.&#34;</span>);
+    }
+
+    <span style=color:#ff79c6>if</span> (!IsNullOrEmpty(PactFileUri) &amp;&amp; !IsNullOrEmpty(BrokerBaseUri))
+    {
+        <span style=color:#ff79c6>throw</span> <span style=color:#ff79c6>new</span> InvalidOperationException(
+            <span style=color:#f1fa8c>&#34;PactFileUri and BrokerBaseUri have both been set, please use either the PactUri or PactBroker method, not both.&#34;</span>);
+    }
+
+    <span style=color:#6272a4>// remainder omitted
+</span><span style=color:#6272a4></span>}
+</code></pre></div><p>This is a potentially frustrating development experience because the code compiles fine but then blows up at runtime.</p>
+<h2 id=the-typestate-pattern>The Typestate Pattern</h2>
+<p>For PactNet v4, I rewrote these APIs to use the typestate pattern so that:</p>
+<ul>
+<li>invalid states can&rsquo;t be expressed, and the error is moved to compile-time if you attempt it</li>
+<li>IDE autocomplete guides you into the <a href=https://blog.codinghorror.com/falling-into-the-pit-of-success/>pit of success</a></li>
+<li>we can support different Pact Specification versions whilst still keeping compile-time correctness<sup id=fnref:1><a href=#fn:1 class=footnote-ref role=doc-noteref>1</a></sup></li>
+</ul>
+<p>The new API is similar, but the interesting part is in how the design achieves the above advantages:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp>IPactVerifier pactVerifier = <span style=color:#ff79c6>new</span> PactVerifier();
+
+pactVerifier
+    .ServiceProvider(<span style=color:#f1fa8c>&#34;Event API&#34;</span>, <span style=color:#ff79c6>new</span> Uri(<span style=color:#f1fa8c>&#34;http://localhost:5000&#34;</span>))
+    .HonoursPactWith(<span style=color:#f1fa8c>&#34;Event API Consumer&#34;</span>)
+    .FromPactFile(<span style=color:#ff79c6>new</span> FileInfo(<span style=color:#f1fa8c>&#34;/path/to/pact.json&#34;</span>))
+    .WithProviderStateUrl(<span style=color:#ff79c6>new</span> Uri(<span style=color:#f1fa8c>&#34;http://localhost:5000/provider-states&#34;</span>))
+    .Verify();
+</code></pre></div><h3 id=defining-the-provider-and-consumer>Defining the Provider and Consumer</h3>
+<p>We use the strong .Net type system to ensure that the verifier must be defined through a series of state machine transitions
+(&ldquo;typestates&rdquo;) which must always be valid. The key is that the <code>IPactVerifier</code> interface for the starting state looks like this:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=color:#ff79c6>public</span> <span style=color:#ff79c6>interface</span> IPactVerifier
+{
+    IPactVerifierProvider ServiceProvider(<span style=color:#8be9fd>string</span> providerName, Uri pactUri);
+}
+
+<span style=color:#ff79c6>public</span> <span style=color:#ff79c6>interface</span> IPactVerifierProvider
+{
+    IPactVerifierConsumer HonoursPactWith(<span style=color:#8be9fd>string</span> consumerName);
+}
+</code></pre></div><p>This means that a new pact verifier can <strong>only</strong> perform one action (defining the provider), and that one action
+is guaranteed at compile time to be valid. The return type is the next valid state, an <code>IPactVerifierProvider</code>, in
+which only one method is possible again (defining the consumer) and it&rsquo;s guaranteed to be valid. At each stage you&rsquo;ll
+also get IDE autocomplete which shows you only valid states that you can move to from your current state.</p>
+<h3 id=defining-the-pact-file-source>Defining the Pact File Source</h3>
+<p>The next state is interesting because the state machine branches:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=color:#ff79c6>public</span> <span style=color:#ff79c6>interface</span> IPactVerifierConsumer
+{
+    IPactVerifierPair FromPactFile(FileInfo pactFile);
+    IPactVerifierPair FromPactUri(Uri pactUri);
+    IPactVerifierPair FromPactBroker(Uri brokerBaseUri, Action&lt;IPactBrokerOptions&gt; configure);
+}
+</code></pre></div><p>This state allows you to pick one of three different pact file sources, but the important thing is that you can only
+pick one. After you&rsquo;ve chosen you move to the next state, so it&rsquo;s no longer possible to define both a file source and
+a Pact Broker source.</p>
+<p>Again, auto-complete ensures you can only get valid options suggested:</p>
+<p><img src=/images/2021-10-13-typestate-pattern-in-csharp/ide-suggestions.png alt="IDE autocomplete suggestions"></p>
+<h3 id=verifying-the-pact>Verifying the Pact</h3>
+<p>For completeness, the final state simply allows you to define some generic options such as log level before triggering
+the verification.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=color:#ff79c6>public</span> <span style=color:#ff79c6>interface</span> IPactVerifierPair
+{
+    IPactVerifierPair WithProviderStateUrl(Uri providerStateUri);
+    IPactVerifierPair WithFilter(<span style=color:#8be9fd>string</span> description = <span style=color:#ff79c6>null</span>, <span style=color:#8be9fd>string</span> providerState = <span style=color:#ff79c6>null</span>);
+    IPactVerifierPair WithLogLevel(PactLogLevel level);
+    <span style=color:#ff79c6>void</span> Verify();
+}
+</code></pre></div><p>Notice that the <code>Verify</code> method has a <code>void</code> return type - once you&rsquo;ve triggered verification you are now in the final
+state and can&rsquo;t go back again.</p>
+<p>One key strength of this approach is that from any of the intermediate typestates it&rsquo;s impossible to call the final <code>Verify</code>
+operation, and so the runtime checks are no longer necessary - if it compiles then it shouldn&rsquo;t blow up at runtime. This
+creates a much better experience for the developer.</p>
+<h2 id=shortcomings-of-typestates-in-c-vs-rust>Shortcomings of Typestates in C# vs. Rust</h2>
+<p>The typestate pattern was <a href=http://cliffle.com/blog/rust-typestate/>made popular in Rust</a>, which has a very strong ownership model that C# lacks. In Rust the first
+two typestates would look something like:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=color:#ff79c6>impl</span> PactVerifier {
+    <span style=color:#ff79c6>pub</span> <span style=color:#ff79c6>fn</span> <span style=color:#50fa7b>service_provider</span>(self, provider: <span style=color:#ff79c6>&amp;</span><span style=color:#8be9fd>str</span>) -&gt; <span style=color:#50fa7b>PactVerifierProvider</span> {
+        <span style=color:#6272a4>// ...
+</span><span style=color:#6272a4></span>    }
+}
+
+<span style=color:#ff79c6>impl</span> PactVerifierProvider {
+    <span style=color:#ff79c6>pub</span> <span style=color:#ff79c6>fn</span> <span style=color:#50fa7b>honours_pact_with</span>(self, consumer: <span style=color:#ff79c6>&amp;</span><span style=color:#8be9fd>str</span>) -&gt; <span style=color:#50fa7b>PactVerifierConsumer</span> {
+        <span style=color:#6272a4>// ...
+</span><span style=color:#6272a4></span>    }
+}
+</code></pre></div><p>For those unfamiliar with Rust, the use of <code>self</code> (instead of taking a reference such as <code>&self</code> or <code>&mut self</code>) transfers
+ownership of the calling object into the function, and then it can never be used again because the function returns a
+different object. You can&rsquo;t do this:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=color:#8be9fd;font-style:italic>let</span> verifier <span style=color:#ff79c6>=</span> PactVerifier::new();
+verifier.service_provider(<span style=color:#f1fa8c>&#34;provider&#34;</span>);
+
+<span style=color:#6272a4>// this won&#39;t compile - verifier ownership was transferred so you can&#39;t use the object again
+</span><span style=color:#6272a4></span>verifier.service_provider(<span style=color:#f1fa8c>&#34;another provider&#34;</span>);
+</code></pre></div><p>In C#, however, there&rsquo;s no way to prevent the user storing the intermediate states and trying to use them again:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=color:#8be9fd>var</span> verifier = <span style=color:#ff79c6>new</span> PactVerifier();
+<span style=color:#8be9fd>var</span> foo = verifier.ServiceProvider(<span style=color:#f1fa8c>&#34;foo&#34;</span>);
+<span style=color:#8be9fd>var</span> bar = verifier.ServiceProvider(<span style=color:#f1fa8c>&#34;bar&#34;</span>);
+
+Assert.Equal(verifier.Provider, <span style=color:#f1fa8c>&#34;bar&#34;</span>); <span style=color:#6272a4>// foo has been overwritten
+</span></code></pre></div><p>In reality you can attempt to combat this by making each state completely immutable so that an entire new state is returned
+by each method call instead of mutating a common state, but this may not always be possible and may be inefficient with large
+states or when used frequently.</p>
+<h2 id=conclusion>Conclusion</h2>
+<p>Overall I think the typestate pattern provides a really nice developer experience, even if the tools available in C# (and other
+languages other than Rust) mean that it can never quite be perfect. The benefits are certainly worth it though and the overall
+result is much better than the ubiquitous fluent builder pattern.</p>
+<p>I think one important design point is not to overuse the pattern. In the final <code>IPactVerifierPair</code> typestate above, it is
+still technically possible to define some of the options more than once, where the final invocation wins:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp>IPactVerifier pactVerifier = <span style=color:#ff79c6>new</span> PactVerifier();
+
+pactVerifier
+    .ServiceProvider(<span style=color:#f1fa8c>&#34;Event API&#34;</span>, <span style=color:#ff79c6>new</span> Uri(<span style=color:#f1fa8c>&#34;http://localhost:5000&#34;</span>))
+    .HonoursPactWith(<span style=color:#f1fa8c>&#34;Event API Consumer&#34;</span>)
+    .FromPactFile(<span style=color:#ff79c6>new</span> FileInfo(<span style=color:#f1fa8c>&#34;/path/to/pact.json&#34;</span>))
+    .withLogLevel(LogLevel.Debug)
+    .withLogLevel(LogLevel.Info)
+    .withLogLevel(LogLevel.Warn) <span style=color:#6272a4>// this one wins
+</span><span style=color:#6272a4></span>    .Verify();
+</code></pre></div><p>I think that&rsquo;s OK though. It would be overkill to attempt to make it compile-time impossible to do that, and the end result API
+would be much worse because each of those options is also allowed to be omitted entirely. The important thing is that this
+never creates an invalid state, and you always have to go through each required state to get to the final <code>Verify</code> call.</p>
+<section class=footnotes role=doc-endnotes>
+<hr>
+<ol>
+<li id=fn:1 role=doc-endnote>
+<p>The final point isn&rsquo;t really relevant to this article as it demonstrates provider tests and there&rsquo;s only one way to do those,
+but consumer tests conform to a version of the Pact Specification (of which there are multiple). The equivalent consumer tests
+implementation uses type states which follow on from defining which specification version to use, and then each intermediate
+state only offers the options that are valid in that specification version and current state.&#160;<a href=#fnref:1 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p>
+</li>
+</ol>
+</section>
+</div>
+<div>
+<ul class=tags></ul>
+</div>
+<div class=share-buttons>
+<a class=twitter-share-button href=# title="Share on Twitter" data-url=https://adamrodger.com/post/2021-10-13-typestate-pattern-in-csharp/ data-text="The Typestate Pattern in C# - Redesigning PactNet"><i class="fab fa-twitter"></i></a>
+<a class=linkedin-share-button href=# title="Share on LinkedIn" data-url=https://adamrodger.com/post/2021-10-13-typestate-pattern-in-csharp/ data-text="The Typestate Pattern in C# - Redesigning PactNet"><i class="fab fa-linkedin-in"></i></a>
+<a class=facebook-share-button href=# title="Share on Facebook" data-url=https://adamrodger.com/post/2021-10-13-typestate-pattern-in-csharp/ data-text="The Typestate Pattern in C# - Redesigning PactNet"><i class="fab fa-facebook"></i></a>
+<a class=telegram-share-button href=# title="Share on Telegram" data-url=https://adamrodger.com/post/2021-10-13-typestate-pattern-in-csharp/ data-text="The Typestate Pattern in C# - Redesigning PactNet"><i class="fab fa-telegram"></i></a>
+<a class=pinterest-share-button href=# title="Share on Pinterest" data-url=https://adamrodger.com/post/2021-10-13-typestate-pattern-in-csharp/ data-text="The Typestate Pattern in C# - Redesigning PactNet"><i class="fab fa-pinterest"></i></a>
+</div>
+</div>
+</main>
+<footer>
+<div>
+<p>
+&copy; Adam Rodger 2021
+&#183; <a href=https://creativecommons.org/licenses/by-sa/4.0 target=_blank>CC BY-SA 4.0</a>
+</p>
+</div>
+</footer>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/js/all.min.js integrity="sha256-MAgcygDRahs+F/Nk5Vz387whB4kSK9NXlDN3w58LLq0=" crossorigin=anonymous></script>
+<script src=/js/jquery.min.js></script>
+<script src=/js/soho.js></script>
+</body>
+</html>

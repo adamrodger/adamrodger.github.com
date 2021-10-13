@@ -14,7 +14,7 @@
 <meta property="og:description" content="Blog">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://adamrodger.com/">
-<script type=application/ld+json>{"@context":"https://schema.org","@graph":[{"@type":"Person","@id":"https://adamrodger.com#author","name":"Adam Rodger","image":{"@type":"ImageObject","url":"https://adamrodger.com/images/profile.jpg"},"description":"Blog"},{"@type":"WebSite","@id":"https://adamrodger.com#website","url":"https://adamrodger.com","name":"Adam Rodger","description":"Blog","publisher":{"@id":"https://adamrodger.com#author"},"inLanguage":"en"},{"@type":"WebPage","@id":"https://adamrodger.com/#webpage","url":"https://adamrodger.com/","name":"Adam Rodger","isPartOf":{"@id":"https://adamrodger.com#website"},"about":{"@id":"https://adamrodger.com#author"},"dateModified":"2018-10-25T00:00:00+00:00","description":"Blog","inLanguage":"en","potentialAction":[{"@type":"ReadAction","target":["https://adamrodger.com/"]}]}]}</script>
+<script type=application/ld+json>{"@context":"https://schema.org","@graph":[{"@type":"Person","@id":"https://adamrodger.com#author","name":"Adam Rodger","image":{"@type":"ImageObject","url":"https://adamrodger.com/images/profile.jpg"},"description":"Blog"},{"@type":"WebSite","@id":"https://adamrodger.com#website","url":"https://adamrodger.com","name":"Adam Rodger","description":"Blog","publisher":{"@id":"https://adamrodger.com#author"},"inLanguage":"en"},{"@type":"WebPage","@id":"https://adamrodger.com/#webpage","url":"https://adamrodger.com/","name":"Adam Rodger","isPartOf":{"@id":"https://adamrodger.com#website"},"about":{"@id":"https://adamrodger.com#author"},"dateModified":"2021-10-13T00:00:00+00:00","description":"Blog","inLanguage":"en","potentialAction":[{"@type":"ReadAction","target":["https://adamrodger.com/"]}]}]}</script>
 <link type=text/css rel=stylesheet href=/css/print.css media=print>
 <link type=text/css rel=stylesheet href=/css/poole.css>
 <link type=text/css rel=stylesheet href=/css/hyde.css>
@@ -63,6 +63,21 @@
 </aside>
 <main class="content container">
 <div class=posts>
+<article class=post>
+<h1 class=post-title>
+<a href=https://adamrodger.com/post/2021-10-13-typestate-pattern-in-csharp/>The Typestate Pattern in C# - Redesigning PactNet</a>
+</h1>
+<div class=post-date>
+<time datetime=2021-10-13T00:00:00Z>Oct 13, 2021</time> &#183; 8 min read
+</div>
+<div>
+The typestate pattern uses the static type system of a language to move potential runtime errors to compile time errors instead. This article discusses the redesign of PactNet v4.0.0 to use that pattern to make code which would create invalid conditions impossible to compile instead of erroring at runtime.
+Pact creates a contract between a consumer and a provider which can be verified during Continuous Integration to ensure that both components are compatible before they&rsquo;re deployed to an environment.
+</div>
+<div class=read-more-link>
+<a href=https://adamrodger.com/post/2021-10-13-typestate-pattern-in-csharp/>Read More</a>
+</div>
+</article>
 <article class=post>
 <h1 class=post-title>
 <a href=https://adamrodger.com/post/2018-10-25-unit-testing-with-mocks/>Unit Testing with Mocks</a>
