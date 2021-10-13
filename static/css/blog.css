@@ -27,3 +27,8 @@ pre code {
     font-family: Monaco,Consolas,"Lucida Console",monospace;
     font-size: 80%;
 }
+
+a {
+    color: purple;
+    text-decoration-line: underline;
+}
