@@ -28,7 +28,7 @@ pre code {
     font-size: 80%;
 }
 
-a {
+div.post a {
     color: purple;
     text-decoration-line: underline;
 }
